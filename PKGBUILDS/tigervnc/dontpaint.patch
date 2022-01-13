@@ -1,0 +1,12 @@
+diff -wbBur tigervnc-1.12.0/common/rfb/VNCServerST.cxx tigervnc-1.11.0.my/common/rfb/VNCServerST.cxx
+--- tigervnc-1.12.0/common/rfb/VNCServerST.cxx.old	2021-09-11 02:18:15.583744295 +0500
++++ tigervnc-1.12.0.my/common/rfb/VNCServerST.cxx	2021-09-11 02:21:06.160201494 +0500
+@@ -738,6 +738,8 @@
+ 
+ void VNCServerST::startFrameClock()
+ {
++  if (getenv("DONTPAINT") && !strcmp("1", getenv("DONTPAINT")))
++    return;
+   if (frameTimer.isStarted())
+     return;
+   if (blockCounter > 0)

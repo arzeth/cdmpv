@@ -1,0 +1,25 @@
+#!/bin/bash
+# DON'T EDIT THIS FILE, IT WILL BE AUTO COPIED TO config.sh BY cdmpv.sh OR YOU
+# Only $DIR is required to `source` this file
+if [[ "$DIR" == "" ]]
+then
+	>&2 echo "config.sh:: env var DIR is empty"
+	exit 1
+fi
+
+ALLOW_COPYINTO=
+ALLOW_COPYOUTOF=1
+PREFER_AUTOCUTSEL=1
+AUTOSWITCH=1
+
+MPV__CONFIG_DIR="$DIR/mpvcfg"
+MPV__INPUT_CONF="$DIR/mpvcfg/input.conf"
+MPV__SHADER_CACHE="$HOME/.config/mpv/shader_cache"
+
+
+# Deprecated vars:
+STUPIDI3ONLYMETHOD=0
+CAM=/dev/video8
+
+
+source "${DIR}"/configCheck.sh
