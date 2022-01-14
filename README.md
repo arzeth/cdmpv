@@ -7,11 +7,13 @@ You can upscale even 800x600 to 5K.
 <br/>Therefore, it's recommended to play VNs with `cdmpv`.
 <br/>
 <br/>I developed `cdmpv` because I wanted my waifus from VNs to be more beautiful as soon as possible on Linux.
-<br/>After 150 hours I want everything beautiful in VNs, even background images.
-<br/>I still want more FPS,
+<br/>After 150 hours that I spent on `cdmpv` I want everything beautiful in VNs, even background images.
+<br/>
+<br/>And since I want more FPS,
 <br/>and play without nested display server,
 <br/>and also want to play SC2 at 70-75 fps when the original FPS drops to 46 in big fights because my Ryzen 2600 is not enough,
-<br/>therefore I am developing the overengineered ultrafast (upscaling only changed regions, changing upscaler on-the-fly to achieve target fps, potentially zero-copy) upscaler/first-in-the-world-universal-upframerater (no MPV; uses a proxy window instead of nested X11) that will probably be ready in February 2022.
+<br/>now I am developing the overengineered ultrafast (upscaling only changed regions, changing upscaler on-the-fly to achieve target fps, potentially zero-copy) upscaler/first-in-the-world-universal-upframerater (no MPV; uses a proxy window instead of nested X11). It will probably be ready in February 2022.
+<br/>In other words, `cdmpv` is a temporary measure.
 <br/>
 <br/>I didn't test `cdmpv` on other computers, so tell me if it doesn't work.
 <br/>
@@ -53,7 +55,9 @@ X11=xorg. It is a display server. The other one in Wayland.
 `GUEST_FPS` is the guest X11's virtual (fake) display's refresh rate = FPS. Rarely games are broken or play too fast when >60 Hz.
 <br/>default `GUEST_X11_FPS_OR_REFRESHRATE` is 60
 <br/>default `UPSCALED_VIDEO_FPS`=30
-<br/>For ultra low-latency, change `--interpolation` from `yes` to `no` in `x11wid.sh` (command arguments override all file configs),
+<br/>For ultra low-latency, change `--interpolation` from `yes` to `no` in `x11wid.sh` (command arguments override all file configs).
+<br/>Although I suspect that interpolation is already (forcefully) disabled because no <code>--video-sync=display-resample</code>
+<br/>which I didn't specify because it stops rendering.
 <br/>
 <br/>By default MPV uses the config provided here, not yours in ~/.config/mpv/
 <br/>because there is at least 20% chance that your config is bad.
