@@ -1,7 +1,8 @@
 # cdmpv (Nested Display server over MPV)
-"c" in "cdmpv" is because I used to think that "**C**hild display server" is the more appropriate term.
-<br>But now I am very accustomed to "cdmpv" (and it's easier to enter), so I keep it so.
-<br>You can upscale even 800x600 to 5K.
+Image quality is much better than Magpie.
+<br/>"c" in "cdmpv" is because I used to think that "**C**hild display server" is the more appropriate term.
+<br/>But now I am very accustomed to "cdmpv" (and it's easier to enter), so I keep it so.
+<br/>You can upscale even 800x600 to 5K.
 <br/>Or crop 800x600 to 16:9 at a certain position and then upscale.
 <br/>
 <br/>Games that grab mouse movements don't work, i.e. you can't play Quake with cdmpv.
