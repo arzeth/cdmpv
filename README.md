@@ -51,15 +51,15 @@ X11=xorg. It is a display server. The other one in Wayland.
 
 
 `GUEST_FPS` is the guest X11's virtual (fake) display's refresh rate = FPS. Rarely games are broken or play too fast when >60 Hz.
-default `GUEST_X11_FPS_OR_REFRESHRATE` is 60
-default `UPSCALED_VIDEO_FPS`=30
-For ultra low-latency, change `--interpolation` from `yes` to `no` in `x11wid.sh` (command arguments override all file configs),
-
-By default MPV uses the config provided here, not yours in ~/.config/mpv/
-because there is at least 20% chance that your config is bad.
-You can change that by removing the option in mpv.sh.
-
-i3 WM launched in the guest X11 uses the `i3-child-config` file here.
+<br/>default `GUEST_X11_FPS_OR_REFRESHRATE` is 60
+<br/>default `UPSCALED_VIDEO_FPS`=30
+<br/>For ultra low-latency, change `--interpolation` from `yes` to `no` in `x11wid.sh` (command arguments override all file configs),
+<br/>
+<br/>By default MPV uses the config provided here, not yours in ~/.config/mpv/
+<br/>because there is at least 20% chance that your config is bad.
+<br/>You can change that by removing the option in mpv.sh.
+<br/>
+<br/>i3 WM launched in the guest X11 uses the `i3-child-config` file here.
 
 
 ## Install
@@ -81,23 +81,23 @@ OpenSUSE:
 sudo dnf install tigervnc xorg-x11-Xvnc
 ```
 Arch Linux's tigervnc package has both Xvnc (that's VNC server with startx) and vncviewer.
-TigerVNC's vncviewer is not used because its vncviewer either
+<br/>TigerVNC's vncviewer is not used because its vncviewer either
 1) aggressively tries to resize the guest X11 to the host resolution
 2) shows unscaled 1280x720 guest in the center of the screen on 1920x1080 host. We need the same *mouse* area as the MPV window.
-
-*If you don't need low FPS and playing backwards every 1000ms, then compile TigerVNC with my one-line patch*
-Currently the only *easy* way to do that is if you use Arch Linux (or other distro that can create packages from PKGBUILD).
-(the PKGBUILD is in this repo)
+<br/>
+<br/>*If you don't need low FPS and playing backwards every 1000ms, then compile TigerVNC with my one-line patch*
+<br/>Currently the only *easy* way to do that is if you use Arch Linux (or other distro that can create packages from PKGBUILD).
+<br/>(the PKGBUILD is in this repo)
 ```
 cd PKGBUILDS/tigervnc
 makepkg -si
 ```
 Now it is installed. It was patched with `dontpaint.patch` (1-2 lines) from the same folder.
-With this patch, the VNC server will send only the very first frame to the VNC client. So if you `killall mpv`, then you would still see the `xfce4-terminal`.
-
-According to my experience,
-every time you upgrade xorg-server (even if it is a minor version),
-you should recompile this package.
+<br/>With this patch, the VNC server will send only the very first frame to the VNC client. So if you `killall mpv`, then you would still see the `xfce4-terminal`.
+<br/>
+<br/>According to my experience,
+<br/>every time you upgrade xorg-server (even if it is a minor version),
+<br/>you should recompile this package.
 
 #### 2) Install all other needed packages
 Arch Linux:
@@ -126,12 +126,12 @@ I am not sure if I specified enough packages needed to compile `autocutsel` in a
 
 ## Environment variable: MP
 Since in most VNs nothing moves,
-we don't need to upscale the 99.9-100% similar frame 10000 times.
+<br/>we don't need to upscale the 99.9-100% similar frame 10000 times.
 
 By default MP=2
-MP=0 disables mpdecimate.
-The higher MP, the more aggressive params are supplied to mpdecimate filter.
-Maximum MP can be 8
+<br/>MP=0 disables mpdecimate.
+<br/>The higher MP, the more aggressive params are supplied to mpdecimate filter.
+<br/>Maximum MP can be 8
 `MP=4 ./cdmpv 1280x720 60 30`
 or if you don't want to restart your already game
 ```
@@ -140,34 +140,34 @@ MP=4 ./x11wid.sh
 ```
 
 Actually no, in many VNs there is an animated icon in the dialog,
-which causes to rerender everything (BTW, my future upscaler upscales only changed regions),
-so if you don't want your GPU's fan to be 100%, then increase `MP`.
-
-
-Also see `max=` line in `x11wid.sh` which forces to render the frame every N second.
-Without it what happens is that if you switch to another desktop, then back,
-then you would have black screen until FFmpeg supplies a new frame.
+<br/>which causes to rerender everything (BTW, my future upscaler upscales only changed regions),
+<br/>so if you don't want your GPU's fan to be 100%, then increase `MP`.
+<br/>
+<br/>
+<br/>Also see `max=` line in `x11wid.sh` which forces to render the frame every N second.
+<br/>Without it what happens is that if you switch to another desktop, then back,
+<br/>then you would have black screen until FFmpeg supplies a new frame.
 
 ## Environment variable: C
 See the code in x11wid.sh, there is code only for 800x600
-By default `C=0`
-`C` can also be `1` or `2` or `3`
-If `C==1` then crop resolution 800x550, crop top=25px
-If `C==2` then crop resolution 800x460, crop top=60px
-If `C==3` then crop resolution 800x450, crop top=70px
-FFmpeg crops, not mpv (although mpv can too, with vf, but then I would need `sed` copied `input.conf`...)
-
-Why crop? Because in old games there's unused space in the bottom.
-
-BTW, you can also Ctrl+Up/Down/Left/Light; zoom is ctrl+u, ctrl+shift+u.
-Note that if you zoom with MPV, MPV will still upscale the whole image and the output resolution won't change (exception: SSimSuperRes, which is a POSTKERNEL shader).
+<br/>By default `C=0`
+<br/>`C` can also be `1` or `2` or `3`
+<br/>If `C==1` then crop resolution 800x550, crop top=25px
+<br/>If `C==2` then crop resolution 800x460, crop top=60px
+<br/>If `C==3` then crop resolution 800x450, crop top=70px
+<br/>FFmpeg crops, not mpv (although mpv can too, with vf, but then I would need `sed` copied `input.conf`...)
+<br/>
+<br/>Why crop? Because in old games there's unused space in the bottom.
+<br/>
+<br/>BTW, you can also Ctrl+Up/Down/Left/Light; zoom is ctrl+u, ctrl+shift+u.
+<br/>Note that if you zoom with MPV, MPV will still upscale the whole image and the output resolution won't change (exception: SSimSuperRes, which is a POSTKERNEL shader).
 
 ```
 MP=4 C=2 ./x11wid.sh
 ```
 
 So when you need the bottom part (e.g. to save the game; the Log button),
-then either
+<br/>then either
 1) Ctrl+Up/Down (but remember how many times you pressed)
 2) Close x11wid.sh (or `killall mpv` if you still haven't launched it separately outside of cdmpv.sh) and start ./x11wid.sh with different `C`.
 
@@ -175,90 +175,90 @@ then either
 
 ## MPV's hotkeys (read it!!!)
 I am probably the only one in the world that benchmarked all possible shaders chains
-(I blacklisted some of patterns, so that it would not take years)
-on 2 images and 2 resolutions (800x450→1920x1080, 1280x720→1920x1080),
-I'll publish my script and results in .json later,
-my script primarily uses ssim (https://github.com/Alexkral/AviSynthAiUpscale/issues/3, code by igv),
-but also dssim (AUR: dssim-git).
-
-Most shader chains that are in `input.conf` are for 1920x1080 screen because my monitor is 1920x1080.
-All shaders upscale images 2x times (1280x720→2560x1440) except when it is explicitly written 3x or 4x in the file name.
-So they need to be downscaled afterwards if the result is higher than your screen resolution.
-Only MPV's built-in upscalers (`scale=` in `mpv.conf`) can upscale to any arbitrary resolution (1.223x, etc.)
-If the upscaled result image is the same size as your screen, then the sharpener is needed (`~~/shaders/igv/SSimDownscaler.glsl`) or Light_Soft shader `~~/shaders/Anime4K_Restore_CNN_Light_Soft_VL-YYY-half.glsl` (or not -half), test yourself. Sometimes they are already included (especially in case of Anime4K *CNN* Upscalers that produces lines that are thicker than needed).
-So if you have 4k/5k display, then add either Anime4K -UL or -UL-RGB or -L variant or ~~/shaders/superxbr.glsl (it's like lanczos but lines are much smoother) at the end of string in `input.conf` if your GPU allows it.
-
-If you are at the same tab where you launched `cdmpv.sh`,
-then that means if you press any key it will be sent to MPV (because cdmpv.sh launches cdmpvTempBgTasks.sh in bg which launches x11wid.sh in bg).
-Or you can `killall mpv`, create a new tab in host X11/Wayland and `./x11wid.sh`.
-
-Every hotkey in `input.conf` cycles through 1-5 shaders.
-If it says press `2` three times, but you accidentally press it four times, press `0`, then repeat what you wanted.
-
-When you switch a shader chain, you'll see so in the MPV's log.
-To switch a shader you should press a key, *then wait while it renders a new frame with it*,
-then go back to the terminal to look if you got the correct "glsl-shaders"
-
-Shader cache is stored in `~/.config/mpv/shader_cache` (you can change that in config.sh)
-Shaders are compiled by CPU of course.
-Heavy shaders are compiled 20 seconds.
-You get blue screen when not enough VRAM or shader compilation failed.
-
-Hotkeys are specified in `input.conf`.
-Every time you launch `x11wid.sh` it copies `input.conf` and removes all `ctrl+`.
-
-Press one time `a` if you want 2x and very high FPS and no ringing and smooth lines and no small details and blurred BG.
+<br/>(I blacklisted some of patterns, so that it would not take years)
+<br/>on 2 images and 2 resolutions (800x450→1920x1080, 1280x720→1920x1080),
+<br/>I'll publish my script and results in .json later,
+<br/>my script primarily uses ssim (https://github.com/Alexkral/AviSynthAiUpscale/issues/3, code by igv),
+<br/>but also dssim (AUR: dssim-git).
+<br/>
+<br/>Most shader chains that are in `input.conf` are for 1920x1080 screen because my monitor is 1920x1080.
+<br/>All shaders upscale images 2x times (1280x720→2560x1440) except when it is explicitly written 3x or 4x in the file name.
+<br/>So they need to be downscaled afterwards if the result is higher than your screen resolution.
+<br/>Only MPV's built-in upscalers (`scale=` in `mpv.conf`) can upscale to any arbitrary resolution (1.223x, etc.)
+<br/>If the upscaled result image is the same size as your screen, then the sharpener is needed (`~~/shaders/igv/SSimDownscaler.glsl`) or Light_Soft shader `~~/shaders/Anime4K_Restore_CNN_Light_Soft_VL-YYY-half.glsl` (or not -half), test yourself. Sometimes they are already included (especially in case of Anime4K *CNN* Upscalers that produces lines that are thicker than needed).
+<br/>So if you have 4k/5k display, then add either Anime4K -UL or -UL-RGB or -L variant or ~~/shaders/superxbr.glsl (it's like lanczos but lines are much smoother) at the end of string in `input.conf` if your GPU allows it.
+<br/>
+<br/>If you are at the same tab where you launched `cdmpv.sh`,
+<br/>then that means if you press any key it will be sent to MPV (because cdmpv.sh launches cdmpvTempBgTasks.sh in bg which launches x11wid.sh in bg).
+<br/>Or you can `killall mpv`, create a new tab in host X11/Wayland and `./x11wid.sh`.
+<br/>
+<br/>Every hotkey in `input.conf` cycles through 1-5 shaders.
+<br/>If it says press `2` three times, but you accidentally press it four times, press `0`, then repeat what you wanted.
+<br/>
+<br/>When you switch a shader chain, you'll see so in the MPV's log.
+<br/>To switch a shader you should press a key, *then wait while it renders a new frame with it*,
+<br/>then go back to the terminal to look if you got the correct "glsl-shaders"
+<br/>
+<br/>Shader cache is stored in `~/.config/mpv/shader_cache` (you can change that in config.sh)
+<br/>Shaders are compiled by CPU of course.
+<br/>Heavy shaders are compiled 20 seconds.
+<br/>You get blue screen when not enough VRAM or shader compilation failed.
+<br/>
+<br/>Hotkeys are specified in `input.conf`.
+<br/>Every time you launch `x11wid.sh` it copies `input.conf` and removes all `ctrl+`.
+<br/>
+<br/>Press one time `a` if you want 2x and very high FPS and no ringing and smooth lines and no small details and blurred BG.
 ```
 ~~/shaders/Anime4K_Clamp_Highlights.glsl:~~/shaders/Anime4K_Upscale_CNN_x2_ULF-KrigBilateral.glsl:~~/shaders/igv/SSimDownscaler_oct8.glsl
 ```
-
+<br/>
 Press one time `e` if you want 4x and very high FPS and no ringing and smooth lines and no small details and blurred BG.
 ```
 ~~/shaders/igv/KrigBilateral.glsl:~~/shaders/Anime4K_Clamp_Highlights-LUMA-first-init.glsl:~~/shaders/Anime4K_Upscale_CNN_x2_UL-LUMA.glsl:~~/shaders/Anime4K_Clamp_Highlights-LUMA-apply.glsl:~~/shaders/Anime4K_Restore_CNN_Light_Soft_S.glsl:~~/shaders/Anime4K_Upscale_CNN_x2_M.glsl
 ```
-
-`e`+`e` is better than `e` but slower.
-`e` has significantly less details than `a`.
-`e`+`e` has less details than `a`.
-`e`+`e` is for 4K.
-
-Anime4K CNN Upscaler is the best for Kimagure Temptation because it fixes the badly downscaled animated hair.
-
-
-Press one time `shift+o` if the original has noise (Sakura no Mori Dreamers 1/2 and Honoguraki Toki no Hate Yori — they are from the same dev)
-Note that the noise in hair in Daitoshokan no Hitsujikai seems to be artistical.
-Therefore, for Daitoshokan no Hitsujikai don't use Anime4K because it damages hair.
-
-
-
-Press one time `2` if you play Vampire's Melody (original is 1920x1080) because the animated sprite seems to be a lossy video (I also tried downscaling before upscaling but the result is worse).
+<br/>
+<br/>`e`+`e` is better than `e` but slower.
+<br/>`e` has significantly less details than `a`.
+<br/>`e`+`e` has less details than `a`.
+<br/>`e`+`e` is for 4K.
+<br/>
+<br/>Anime4K CNN Upscaler is the best for Kimagure Temptation because it fixes the badly downscaled animated hair.
+<br/>
+<br/>
+<br/>Press one time `shift+o` if the original has noise (Sakura no Mori Dreamers 1/2 and Honoguraki Toki no Hate Yori — they are from the same dev)
+<br/>Note that the noise in hair in Daitoshokan no Hitsujikai seems to be artistical.
+<br/>Therefore, for Daitoshokan no Hitsujikai don't use Anime4K because it damages hair.
+<br/>
+<br/>
+<br/>Press one time `2` if you play Vampire's Melody (original is 1920x1080) because the animated sprite seems to be a lossy video (I also tried downscaling before upscaling but the result is worse).
 ```
 ~~/shaders/Anime4K_Restore_CNN_Light_Soft_VL-YYY.glsl
 ```
-
-Press two times `2` if you play the 1920x1080 game at 1920x1080 screen, and when a character's face is near, you see sprites are low-resolution,
+<br/>
+<br/>Press two times `2` if you play the 1920x1080 game at 1920x1080 screen, and when a character's face is near, you see sprites are low-resolution,
 in this case you need this:
 ```
 ~~/shaders/Anime4K_Restore_CNN_Light_Soft_VL-YYY-half.glsl
 ```
 or in some cases just `./cdmpv 1280x720 60 60` for this game, although somes VNs use very bad cheap downscaling when the output resolution is lower than original (Kinkoi on Unity, at least the early version)... or less likely it's a bug in Wine.
-
-Press three times `2` if you play Monkey!¡ because the original has mega aliasing.
+<br/>
+<br/>Press three times `2` if you play Monkey!¡ because the original has mega aliasing.
 ```
 ~~/shaders/Anime4K_Restore_CNN_Moderate_Soft_VL-YYY.glsl
 ```
-
-For Wanko to Kurasou (800x600->4K) press three or four times `shift+q` (depending on FPS and tastes).
-If that's too slow, then press two times `e`.
-
-
+<br/>
+<br/>
+<br/>For Wanko to Kurasou (800x600->4K) press three or four times `shift+q` (depending on FPS and tastes).
+<br/>If that's too slow, then press two times `e`.
+<br/>
+<br/>
 Press
-`y` (less details but less pixelated)
-or `shift+y` (less details but less pixelated and almost no color noise)
-or `f` (no pixelation)
-if you play the old version of YU-NO.
-
-Press one time `shift+q` (good for 800x600 → 1920x/2560x; the best for Sugar * Style 1280x720→1920x1080)
+<br/>`y` (less details but less pixelated)
+<br/>or `shift+y` (less details but less pixelated and almost no color noise)
+<br/>or `f` (no pixelation)
+<br/>if you play the old version of YU-NO.
+<br/>
+<br/>Press one time `shift+q` (good for 800x600 → 1920x/2560x; the best for Sugar * Style 1280x720→1920x1080)
 ```
 ~~/shaders/Anime4K_Clamp_Highlights-LUMA-first-init.glsl:~~/shaders/Anime4K_Upscale_GAN_x3_VL-LUMA.glsl:~~/shaders/Anime4K_Clamp_Highlights-LUMA-apply.glsl:~~/shaders/igv/KrigBilateral.glsl
 ```
@@ -268,113 +268,115 @@ Sometimes `w` is the best (e.g. Koikari Love for Hire), but sometimes it has rin
 ~~/shaders/igv/KrigBilateral.glsl::~~/shaders/avisynth/mpv user shaders/LineArt/3x/AiUpscale_HQ_3x_LineArtFCla.glsl:~~/shaders/Anime4K_Restore_CNN_Light_VL-YYY.glsl
 ```
 Or rarely `n` is better (same as `w` but without Restore). The `Restore` shaders fix some ringing for AiUpscale.
-Also lines are aliased (in other words, ladder) for some VNs with AiUpscale, which doesn't show up on SSIM test, but we humans see it.
+<br/>Also lines are aliased (in other words, ladder) for some VNs with AiUpscale, which doesn't show up on SSIM test, but we humans see it.
 
 
 ## About new shaders
 Anime4K shaders are optimized for x264 videos, i.e. videos with all kinds of artifacts.
-Also they are trained on JPEG q=95
-But in most VNs sprites are lossless and backgrounds are like JPEG q≈95.
-Anime4K Upscale shaders are very bad for background, they think all details are noise so just blur everything.
-But Anime4K Restore shaders barely do so.
+<br/>Also I think they are trained on JPEG q=95 (`jpeg_factor=95` in https://github.com/bloc97/Anime4K/blob/master/tensorflow/Train_Model.ipynb)
+<br/>But in most VNs sprites are lossless and backgrounds are like JPEG q≈95.
+<br/>Anime4K Upscale shaders are very bad for background, they think all details are noise so just blur everything.
+<br/>But Anime4K Restore shaders barely do so.
 
 When input is lossless, `Anime4K_Restore_CNN_*-YYY.glsl` (MAIN shaders) is better, than non-`-YYY` because black lines don't become red. It takes RGB input, but changes only the Y channel.
-Generated by
+<br/>Generated by
 ```
 u=YYY ./resluma.sh Anime4K_Restore_CNN_*
 ```
 
 Anime4K_Clamp_Highlights-LUMA-first-init.glsl
-Anime4K_Clamp_Highlights-LUMA-apply.glsl
+<br/>Anime4K_Clamp_Highlights-LUMA-apply.glsl
+<br/>Usage for these two see in `input.conf`
 
 
 `Anime4K_*-LUMA.glsl` are for use before LUMA shaders. But because they originally supposed to also take non-black-and-white input (i.e. U and V channels = chroma), results are a little bit worse. The exception is GAN_x3_VL.
-Generated by
+<br/>Generated by
 ```
 ./upluma.sh Anime4K_Upscale*
 ```
 
 
 Because everything was a little more red (unless -L variant is used), I created
-Anime4K_Upscale_CNN_x2_ULF-KrigBilateral.glsl
-Although the input is still RGB, only Y channel and U channel are upscaled by Anime4K, while V is upscaled by KrigBilateral embedded in the same file.
-The disadvantage (compared to the original shader) is thin pink lines are darker.
-It requires a little more VRAM (to store both the upscaled image and also the original image).
-V channel only is because there's something wrong with upscaling U channel. FIXME!
+<br/>Anime4K_Upscale_CNN_x2_ULF-KrigBilateral.glsl
+<br/>Although the input is still RGB, only Y channel and U channel are upscaled by Anime4K, while V is upscaled by KrigBilateral embedded in the same file.
+<br/>The disadvantage (compared to the original shader) is thin pink lines are darker.
+<br/>It requires a little more VRAM (to store both the upscaled image and also the original image).
+<br/>V channel only is because there's something wrong with upscaling U channel. FIXME!
 
 
 If a shader file has `F` at the end, then that means that this shader will be *f*orcefully (no `//!WHEN`) used even the input resolution is bigger than display resolution.
-If a shader file has `Cla` at the end, then that means Anime4K_Clamp_Highlights.glsl is embedded.
-`FCla` = `F` + `Cla`
+<br/>If a shader file has `Cla` at the end, then that means Anime4K_Clamp_Highlights.glsl is embedded.
+<br/>`FCla` = `F` + `Cla`
+<br/>
+<br/>`avisynth/mpv user shaders/LineArt/3x/AiUpscale_HQ_3x_LineArtFCla.glsl` has many additional changes to fight ringing.
+<br/>`avisynth/mpv user shaders/LineArt/3x/AiUpscale_HQ_3x_LineArtFCla.orig.glsl` is without those changes (`n` two times or `w` four times)
 
-`avisynth/mpv user shaders/LineArt/3x/AiUpscale_HQ_3x_LineArtFCla.glsl` has many additional changes to fight ringing.
-`avisynth/mpv user shaders/LineArt/3x/AiUpscale_HQ_3x_LineArtFCla.orig.glsl` is without those changes (`n` two times or `w` four times)
-
-AiUpscale_HQ_4x_LineArt is worse than _3x, at least for 2D, althought a few details are better.
+AiUpscale_HQ_4x_LineArt is worse than _3x, at least for 2D,
+<br/>althought a few details are better, so I didn't include int
 
 ## Screenshots
 `DISPLAY=:99 scrot` to save original unupscaled image as .png.
-Press `s` to save *un*upscaled image as .png to `/tmp/`
-Press `shift+s` to save upscaled image as .png to `/tmp/`
+<br/>Press `s` to save *un*upscaled image as .png to `/tmp/`
+<br/>Press `shift+s` to save upscaled image as .png to `/tmp/`
 
 
 ## About shaders
-When 1280x720→1920x1080, then AiUpscale_HQ_3x_LineArt has much better SSIM than AiUpscale_HQ_2x_LineArt for 2D sprites, but the overall SSIM is worse (~0.00234 vs ~0.00263) because background images are not very anime.
-`Anime4K_Clamp_Highlights.glsl` is needed because upscalers accidentally create very bright micro areas.
-Anime4K_Upscale_*CNN*_ hates small details. I tried to fix it: `Anime4K_Upscale_CNN_x2_ULF-RGB-noise.glsl` but it's not always good.
-TsubaUP is good for everything except 2D (especially hair is bad).
-FSRCNNX is kinda like TsubaUP but slower but better hair.
-I tested only VNs, but FSRCNNX_x2_56-16-4-1.glsl is always worse than _16.
-The latest revision of SSimDownscaler.glsl does something bad to eyes,
-so the previous October 8 revision is used that I named `SSimDownscaler_oct8.glsl`
-`nnedi3-nns128-win8x6.hook` is very bad, so not even included.
-`Anime4K_Upscale_GAN_x4_UUL.glsl` (two `U`) thins lines too much. Probably it was created for ancient anime videos.
-`Anime4K_Upscale_GAN_x4_UL.glsl` is not worth if I remember correctly.
-
-`ravu-zoom-*` damages geometry, so not included. And FSRCNNX is simply better.
-
-`Anime4K*Restore*UL` work only on Vulkan.
-
-(POSTKERNEL stage is used right before MPV downscales the image with the algo chose in `dscale`. MPV doesn't always downscale, only when needed.
-
-SSimDownscaler (POSTKERNEL stage shader) is a sharpener. If the image is not going to be downscaled afterwards by MPV, then this shader is not used because it would introduce many artifacts.
-SSimSuperRes.glsl (POSTKERNEL stage shader) is upscaler
+<br/>When 1280x720→1920x1080, then AiUpscale_HQ_3x_LineArt has much better SSIM than AiUpscale_HQ_2x_LineArt for 2D sprites, but the overall SSIM is worse (~0.00234 vs ~0.00263) because background images are not very anime.
+<br/>`Anime4K_Clamp_Highlights.glsl` is needed because upscalers accidentally create very bright micro areas.
+<br/>Anime4K_Upscale_*CNN*_ hates small details. I tried to fix it: `Anime4K_Upscale_CNN_x2_ULF-RGB-noise.glsl` but it's not always good.
+<br/>TsubaUP is good for everything except 2D (especially hair is bad).
+<br/>FSRCNNX is kinda like TsubaUP but slower but better hair.
+<br/>I tested only VNs, but FSRCNNX_x2_56-16-4-1.glsl is always worse than _16.
+<br/>The latest revision of SSimDownscaler.glsl does something bad to eyes,
+<br/>so the previous October 8 revision is used that I named `SSimDownscaler_oct8.glsl`
+<br/>`nnedi3-nns128-win8x6.hook` is very bad, so not even included.
+<br/>`Anime4K_Upscale_GAN_x4_UUL.glsl` (two `U`) thins lines too much. Probably it was created for ancient anime videos.
+<br/>`Anime4K_Upscale_GAN_x4_UL.glsl` is not worth if I remember correctly.
+<br/>
+<br/>`ravu-zoom-*` damages geometry, so not included. And FSRCNNX is simply better.
+<br/>
+<br/>`Anime4K*Restore*UL` work only on Vulkan.
+<br/>
+<br/>(POSTKERNEL stage is used right before MPV downscales the image with the algo chose in `dscale`. MPV doesn't always downscale, only when needed.
+<br/>
+<br/>SSimDownscaler (POSTKERNEL stage shader) is a sharpener. If the image is not going to be downscaled afterwards by MPV, then this shader is not used because it would introduce many artifacts.
+<br/>SSimSuperRes.glsl (POSTKERNEL stage shader) is upscaler
 
 
 ## Tips
 1) Disable auto cursor move (i.e. you click "Save game", and your mouse moves to the "Yes" button) in the game menu
-because the game runs in guest X11
-and it sends the mouse move command only to the guest X11,
-so the next time you move your mouse,
-your guest X11's mouse position reverts to the host's one.
+<br/>because the game runs in guest X11
+<br/>and it sends the mouse move command only to the guest X11,
+<br/>so the next time you move your mouse,
+<br/>your guest X11's mouse position reverts to the host's one.
 
 2)
 `wine explorer /desktop=cdmpv,$YOURGUESTRESOLUTION`
 or
 `wine explorer /desktop=cdmpv,$YOURGUESTRESOLUTION game.exe`
-enables wine's own virtual desktop just for current session (doesn't add nor overwrite `[Software\\Wine\\Explorer\\Desktops]` in your `$WINEPREFIX/user.reg`), which is sometimes needed because `i3` is a *tiling* window manager, i.e. when you have one window, its size is fullscreen, but if you open a second window, both windows would get automatically the same size—half of the screen each. You can press Win+W or Win+Space or Win+Shift+Space to control that.
-One wineprefix can have multiple of them.
+<br/>enables wine's own virtual desktop just for current session (doesn't add nor overwrite `[Software\\Wine\\Explorer\\Desktops]` in your `$WINEPREFIX/user.reg`), which is sometimes needed because `i3` is a *tiling* window manager, i.e. when you have one window, its size is fullscreen, but if you open a second window, both windows would get automatically the same size—half of the screen each. You can press Win+W or Win+Space or Win+Shift+Space to control that.
+<br/>One wineprefix can have multiple of them.
 
 3) If you want Steam to be in host X11/Wayland but you want the game be in nested X11, then go into game's options -> command arguments -> env DISLPAY=:99 %command%
 
 4) Black screen in Saku Saku Cherry Blossoms and flickering in Grisaia, Himawari, Ikinari Anata ni Koishiteiru
-If an .exe tells a strange error as soon as you launch it, then that's because you set STAGING_WRITECOPY=1 somewhere.
-If you still have graphical glitches, then use both dgVoodoo2 (you can read about it in the "Alternative to cdmpv" section) AND software rendering AND *un*installed DXVK, which is 100% performance-wise enough for VNs:
+<br/>If an .exe tells a strange error as soon as you launch it, then that's because you set STAGING_WRITECOPY=1 somewhere.
+<br/>If you still have graphical glitches, then use both dgVoodoo2 (you can read about it in the "Alternative to cdmpv" section) AND software rendering AND *un*installed DXVK, which is 100% performance-wise enough for VNs:
 ```
 __GLX_VENDOR_LIBRARY_NAME=mesa LIBGL_ALWAYS_SOFTWARE=1 VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/lvp_icd.x86_64.json  MESA_LOADER_DRIVER_OVERRIDE=zink
 ```
-
-BTW, when using NVIDIA GPU (I don't know about other GPUs) inside *nested* X11 there is a problem with `glxinfo` and videos in some VNs:
-E.g. Akeiro Kaikitan as soon as it tries to play a video, the wine process finishes with X11 error.
-Also I found out that Akeiro Kaikitan saves the read messages only after manually exiting the whole game, not when returning to main menu.
-Offending videos are open in a new window. Maybe it tries to create a too large window?
-
-
-Uninstall DXVK:
+<br/>
+<br/>BTW, when using NVIDIA GPU (I don't know about other GPUs) inside *nested* X11 there is a problem with `glxinfo` and videos in some VNs:
+<br/>E.g. Akeiro Kaikitan as soon as it tries to play a video, the wine process finishes with X11 error.
+<br/>Also I found out that Akeiro Kaikitan saves the read messages only after manually exiting the whole game, not when returning to main menu.
+<br/>Offending videos are open in a new window. Maybe it tries to create a too large window?
+<br/>
+<br/>
+<br/>Uninstall DXVK:
 ```
 /usr/share/dxvk/setup_dxvk.sh uninstall
 ```
-Install DXVK:
+<br/>Install DXVK:
 ```
 /usr/share/dxvk/setup_dxvk.sh install --with-d3d10 --symlink
 ```
@@ -387,7 +389,7 @@ Don't forget about `WINEPREFIX=`
 
 ## Current Algorithm of ./cdmpv.sh
 1) If PREFER_AUTOCUTSEL=1 (default) in `config.sh`, then for reliable copy clipboard from nested X11 to host X11 (didn't test this feautre on Wayland), patched `autocutsel` is automatically compiled if it wasn't compiled yet.
-It is needed because the VNC protocol by default supports only ASCII. There are some hacks in TigerVNC (both server and client) but sometimes it forgets to send update to the host.
+<br/>It is needed because the VNC protocol by default supports only ASCII. There are some hacks in TigerVNC (both server and client) but sometimes it forgets to send update to the host.
 2) Cache all executable files into RAM (useful for HDD).
 3) Launch `./cdmpvTempBgTasks.sh` in background
 4) Launch TigerVNC's `Xvnc` which provides a guest (child) X11 server (X11 in X11/Wayland) and a VNC server.
