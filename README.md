@@ -1,18 +1,20 @@
-# cdmpv (Child Display server over MPV)
-You can upscale even 800x600 to 5K.
+# cdmpv (Nested Display server over MPV)
+"c" in "cdmpv" is because I used to think that "**C**hild display server" is the more appropriate term.
+<br>But now I am very accustomed to "cdmpv" (and it's easier to enter), so I keep it so.
+<br>You can upscale even 800x600 to 5K.
 <br/>Or crop 800x600 to 16:9 at a certain position and then upscale.
 <br/>
 <br/>Games that grab mouse movements don't work, i.e. you can't play Quake with cdmpv.
 <br/>That's because TigerVNC and UltraVNC (IIRC) don't support mouse movements, they send/receive only mouse's absolute position.
 <br/>Therefore, it's recommended to play VNs with `cdmpv`.
 <br/>
-<br/>I developed `cdmpv` because I wanted my waifus from VNs to be more beautiful as soon as possible on Linux.
-<br/>After 150 hours that I spent on `cdmpv` I want everything beautiful in VNs, even background images.
+<br/>I developed `cdmpv` because [Magpie](https://github.com/Blinue/Magpie) doesn't work on Wine and I really wanted my waifus (lol) from VNs to be more beautiful as soon as possible on Linux.
+<br/>(Although after 150 hours that I spent on `cdmpv` I want now everything to be beautiful in VNs, even background images.).
 <br/>
 <br/>And since I want more FPS,
 <br/>and play without nested display server,
 <br/>and also want to play SC2 at 70-75 fps when the original FPS drops to 46 in big fights because my Ryzen 2600 is not enough,
-<br/>now I am developing the overengineered ultrafast (upscaling only changed regions, changing upscaler on-the-fly to achieve target fps, potentially zero-copy) upscaler/first-in-the-world-universal-upframerater (no MPV; uses a proxy window instead of nested X11). It will probably be ready in February 2022.
+<br/>now I am developing the overengineered ultrafast (upscaling only changed regions, switching upscalers on-the-fly to achieve target fps, potentially zero-copy) upscaler/first-in-the-world-universal-upframerater without using MPV and with using a proxy window instead of nested X11. It will probably be ready in February 2022.
 <br/>In other words, `cdmpv` is a temporary measure.
 <br/>
 <br/>I didn't test `cdmpv` on other computers, so tell me if it doesn't work.
@@ -522,13 +524,13 @@ If the host is Wayland, can a guest be X11? I don't know, but I guess 99%.
 <br/>The only way to grab a window's contents on Wayland I know is to use OBS (but I didn't test):
 
 ## Lessons learned
-Downscaling algorithm is very important.
-<br/>catmull_rom (short: catrom) and lanczos are the best.
-<br/>(I'll compare lanczos vs ginseng later).
-<br/>catmull_rom also somehow hides AiUpscale's ringing.
+Which downscaling algorithm is used is very important.
 <br/>There are very different emotions from a picture depending
 <br/>on which dscaler was used: mitchell, catmull_rom, lanczos, etc.
+<br/>catmull_rom (short: catrom) and lanczos are the best.
+<br/>(though I didn't compare lanczos vs ginseng which are very similar to each other).
 <br/>Bicubic is trash, by the way.
+<br/>catmull_rom also somehow hides AiUpscale's ringing.
 <br/>ewa_lanczos* give too blurry picture.
 <br/>I use `feh` to look at how much info is lost and how smooth are lines.
 <br/>
@@ -552,6 +554,6 @@ https://www.binance.com/en/my/wallet/account/payment/send
 3) No Patreon because I assume I would need to provide private/beta builds to patrons. Therefore, maybe later, because my upcoming upscaler is too unready for now.
 
 ## My other related projects
-[sugoi-web](https://arzeth.github.io/sugoi-web/) Web Frontend for Sugoi Translator
+[sugoi-web](https://arzeth.github.io/sugoi-web/) Web Frontend for Sugoi-Japanese-Translator
 
 
