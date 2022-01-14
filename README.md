@@ -1,52 +1,35 @@
 # cdmpv (Child Display server over MPV)
 You can upscale even 800x600 to 5K.
-Or crop 800x600 to 16:9 at a certain position and then upscale.
-
-
-Games that grab mouse movements don't work, i.e. you can't play Quake with cdmpv.
-
-That's because TigerVNC and UltraVNC (IIRC) don't support mouse movements, they send/receive only mouse's absolute position.
-
-Therefore, it's recommended to play VNs with `cdmpv`.
-
-I developed `cdmpv` because I wanted my waifus from VNs to be more beautiful as soon as possible on Linux.
-
-After 150 hours I want everything beautiful in VNs, even background images.
-
-I still want more FPS,
-
-and play without nested display server,
-
-and also want to play SC2 at 70-75 fps when the original FPS drops to 46 in big fights because my Ryzen 2600 is not enough,
-therefore I am developing the overengineered ultrafast (upscaling only changed regions, changing upscaler on-the-fly to achieve target fps, potentially zero-copy) upscaler/first-in-the-world-universal-upframerater (no MPV; uses a proxy window instead of nested X11) that will probably be ready in February 2022.
-
-
-I didn't test `cdmpv` on other computers, so tell me if it doesn't work.
-
-
-Read everything below (especially the Hotkeys section) in order to use it.
+<br/>Or crop 800x600 to 16:9 at a certain position and then upscale.
+<br/>
+<br/>Games that grab mouse movements don't work, i.e. you can't play Quake with cdmpv.
+<br/>That's because TigerVNC and UltraVNC (IIRC) don't support mouse movements, they send/receive only mouse's absolute position.
+<br/>Therefore, it's recommended to play VNs with `cdmpv`.
+<br/>
+<br/>I developed `cdmpv` because I wanted my waifus from VNs to be more beautiful as soon as possible on Linux.
+<br/>After 150 hours I want everything beautiful in VNs, even background images.
+<br/>I still want more FPS,
+<br/>and play without nested display server,
+<br/>and also want to play SC2 at 70-75 fps when the original FPS drops to 46 in big fights because my Ryzen 2600 is not enough,
+<br/>therefore I am developing the overengineered ultrafast (upscaling only changed regions, changing upscaler on-the-fly to achieve target fps, potentially zero-copy) upscaler/first-in-the-world-universal-upframerater (no MPV; uses a proxy window instead of nested X11) that will probably be ready in February 2022.
+<br/>
+<br/>I didn't test `cdmpv` on other computers, so tell me if it doesn't work.
+<br/>
+<br/>Read everything below (especially the Hotkeys section) in order to use it.
 
 ## Requirements
 Linux (or probably FreeBSD/etc.).
-
-Ability to launch MPV using X11 (Xwayland is ok).
+<br/>Ability to launch MPV using X11 (Xwayland is ok).
 
 ## Terminology
 X11=xorg. It is a display server. The other one in Wayland.
-
-Host X11
-
-Guest X11=Child X11=Nested X11=X11 in X11/Xwayland
-
-VNC
-
-WM=Window Manager.
-
-[MPV](https://github.com/mpv-player/mpv) is a video player (also audio and images), it's used here for upscaling and displaying the result.
-
-[i3](https://github.com/i3/i3) as a WM in nested X11.
-
-[FFmpeg](https://github.com/FFmpeg/FFmpeg) for capturing what's inside nested X11.
+<br/>Host X11
+<br/>Guest X11=Child X11=Nested X11=X11 in X11/Xwayland
+<br/>VNC
+<br/>WM=Window Manager.
+<br/>[MPV](https://github.com/mpv-player/mpv) is a video player (also audio and images), it's used here for upscaling and displaying the result.
+<br/>[i3](https://github.com/i3/i3) as a WM in nested X11.
+<br/>[FFmpeg](https://github.com/FFmpeg/FFmpeg) for capturing what's inside nested X11.
 
 ## How to use:
 ```
@@ -68,20 +51,13 @@ WM=Window Manager.
 
 
 `GUEST_FPS` is the guest X11's virtual (fake) display's refresh rate = FPS. Rarely games are broken or play too fast when >60 Hz.
-
 default `GUEST_X11_FPS_OR_REFRESHRATE` is 60
-
 default `UPSCALED_VIDEO_FPS`=30
-
 For ultra low-latency, change `--interpolation` from `yes` to `no` in `x11wid.sh` (command arguments override all file configs),
 
-
 By default MPV uses the config provided here, not yours in ~/.config/mpv/
-
 because there is at least 20% chance that your config is bad.
-
 You can change that by removing the option in mpv.sh.
-
 
 i3 WM launched in the guest X11 uses the `i3-child-config` file here.
 
@@ -105,24 +81,19 @@ OpenSUSE:
 sudo dnf install tigervnc xorg-x11-Xvnc
 ```
 Arch Linux's tigervnc package has both Xvnc (that's VNC server with startx) and vncviewer.
-
 TigerVNC's vncviewer is not used because its vncviewer either
-
 1) aggressively tries to resize the guest X11 to the host resolution
 2) shows unscaled 1280x720 guest in the center of the screen on 1920x1080 host. We need the same *mouse* area as the MPV window.
 
 *If you don't need low FPS and playing backwards every 1000ms, then compile TigerVNC with my one-line patch*
 Currently the only *easy* way to do that is if you use Arch Linux (or other distro that can create packages from PKGBUILD).
-
 (the PKGBUILD is in this repo)
 ```
 cd PKGBUILDS/tigervnc
 makepkg -si
 ```
 Now it is installed. It was patched with `dontpaint.patch` (1-2 lines) from the same folder.
-
 With this patch, the VNC server will send only the very first frame to the VNC client. So if you `killall mpv`, then you would still see the `xfce4-terminal`.
-
 
 According to my experience,
 every time you upgrade xorg-server (even if it is a minor version),
