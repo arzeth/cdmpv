@@ -19,6 +19,14 @@ You can upscale even 800x600 to 5K.
 <br/>
 <br/>Read everything below (especially the Hotkeys section) in order to use it.
 
+## How good can it upscale
+### Example 1
+Original (800x600, lossless .webp)
+<br/>https://arzet.cf/scr/wanko_origHeight600.webp
+
+Upscaled (2880x2160, 5.6MB lossless .webp) (Hotkey: w+w+w, low FPS on GTX 1660 Super)
+<br/>https://arzet.cf/scr/wanko_upscaledHeight2160.webp
+
 ## Requirements
 Linux (or probably FreeBSD/etc.).
 <br/>Ability to launch MPV using X11 (Xwayland is ok).
@@ -66,7 +74,7 @@ X11=xorg. It is a display server. The other one in Wayland.
 <br/>i3 WM launched in the guest X11 uses the `i3-child-config` file here.
 
 
-## Install
+## Dependencies to use cdmpv
 #### 1) Install VNC server and client
 Arch Linux:
 ```
@@ -544,6 +552,6 @@ https://www.binance.com/en/my/wallet/account/payment/send
 3) No Patreon because I assume I would need to provide private/beta builds to patrons. Therefore, maybe later, because my upcoming upscaler is too unready for now.
 
 ## My other related projects
-[sugoi-web](https://github.com/arzeth/sugoi-web) Web Frontend for Sugoi Translator
+[sugoi-web](https://arzeth.github.io/sugoi-web/) Web Frontend for Sugoi Translator
 
 
