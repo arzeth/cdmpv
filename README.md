@@ -27,9 +27,9 @@ Host X11
 Guest X11=Child X11=Nested X11=X11 in X11/Xwayland
 VNC
 WM=Window Manager.
-[MPV] is a video player (also audio and images), it's used here for upscaling and displaying the result.
-[i3] as a WM in nested X11.
-[FFmpeg] for capturing what's inside nested X11.
+[MPV](https://github.com/mpv-player/mpv) is a video player (also audio and images), it's used here for upscaling and displaying the result.
+[i3](https://github.com/i3/i3) as a WM in nested X11.
+[FFmpeg](https://github.com/FFmpeg/FFmpeg) for capturing what's inside nested X11.
 
 ## How to use:
 ```
@@ -60,6 +60,69 @@ because there is at least 20% chance that your config is bad.
 You can change that by removing the option in mpv.sh.
 
 i3 WM launched in the guest X11 uses the `i3-child-config` file here.
+
+
+## Install
+#### 1) Install VNC server and client
+Arch Linux:
+```
+sudo pacman -S tigervnc gtk-vnc
+```
+Debian, Ubuntu, Mint, etc.:
+```
+sudo apt install tigervnc-viewer tigervnc-standalone-server gvncviewer
+```
+Fedora:
+```
+sudo dnf install tigervnc tigervnc-server
+```
+OpenSUSE:
+```
+sudo dnf install tigervnc xorg-x11-Xvnc
+```
+Arch Linux's tigervnc package has both Xvnc (that's VNC server with startx) and vncviewer.
+TigerVNC's vncviewer is not used because its vncviewer either
+1) aggressively tries to resize the guest X11 to the host resolution
+2) shows unscaled 1280x720 guest in the center of the screen on 1920x1080 host. We need the same *mouse* area as the MPV window.
+
+*If you don't need low FPS and playing backwards every 1000ms, then compile TigerVNC with my one-line patch*
+Currently the only *easy* way to do that is if you use Arch Linux (or other distro that can create packages from PKGBUILD).
+(the PKGBUILD is in this repo)
+```
+cd PKGBUILDS/tigervnc
+makepkg -si
+```
+Now it is installed. It was patched with `dontpaint.patch` (1-2 lines) from the same folder.
+With this patch, the VNC server will send only the very first frame to the VNC client. So if you `killall mpv`, then you would still see the `xfce4-terminal`.
+
+According to my experience,
+every time you upgrade xorg-server (even if it is a minor version),
+you should recompile this package.
+
+#### 2) Install all other needed packages
+Arch Linux:
+```
+sudo pacman -S mpv i3-wm ffmpeg perl gcc dmenu bemenu bemenu-x11 dunst xfce4-terminal xorg-setxkbmap xorg-xset xorg-xrandr xdotool xorg-xdpyinfo scrot libwebp terminus-font wmctrl calc
+```
+Debian, Ubuntu, Mint, etc.:
+```
+sudo apt install mpv i3 ffmpeg perl gcc libx11-dev suckless-tools dunst xfce4-terminal x11-xkb-utils x11-xserver-utils x11-utils xdotool scrot webp xfonts-terminus wmctrl apcalc
+```
+Common packages for OpenSUSE and Fedora:
+```
+sudo dnf install mpv i3 ffmpeg perl gcc dmenu bemenu dunst xfce4-terminal setxkbmap xset xrandr xdotool xdpyinfo scrot libwebp-tools wmctrl calc
+```
+Only Fedora:
+```
+sudo dnf install terminus-fonts-console
+```
+Only OpenSUSE:
+```
+sudo dnf install terminus-bitmap-fonts
+```
+
+I am not sure if I specified enough packages needed to compile `autocutsel` in all distros.
+
 
 ## Environment variable: MP
 Since in most VNs nothing moves,
@@ -296,7 +359,7 @@ One wineprefix can have multiple of them.
 
 4) Black screen in Saku Saku Cherry Blossoms and flickering in Grisaia, Himawari, Ikinari Anata ni Koishiteiru
 If an .exe tells a strange error as soon as you launch it, then that's because you set STAGING_WRITECOPY=1 somewhere.
-If you still have graphical glitches, then use both dgVoodoo2 AND software rendering AND *un*installed DXVK, which is 100% performance-wise enough for VNs:
+If you still have graphical glitches, then use both dgVoodoo2 (you can read about it in the "Alternative to cdmpv" section) AND software rendering AND *un*installed DXVK, which is 100% performance-wise enough for VNs:
 ```
 __GLX_VENDOR_LIBRARY_NAME=mesa LIBGL_ALWAYS_SOFTWARE=1 VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/lvp_icd.x86_64.json  MESA_LOADER_DRIVER_OVERRIDE=zink
 ```
@@ -319,67 +382,7 @@ Don't forget about `WINEPREFIX=`
 
 5) In one case (Schatten) as soon as you start it, there's a unskippable video which is displayed black and played for 1 minute.
 
-
-## Install
-#### 1) Install VNC server and client
-Arch Linux:
-```
-sudo pacman -S tigervnc gtk-vnc
-```
-Debian, Ubuntu, Mint, etc.:
-```
-sudo apt install tigervnc-viewer tigervnc-standalone-server gvncviewer
-```
-Fedora:
-```
-sudo dnf install tigervnc tigervnc-server
-```
-OpenSUSE:
-```
-sudo dnf install tigervnc xorg-x11-Xvnc
-```
-Arch Linux's tigervnc package has both Xvnc (that's VNC server with startx) and vncviewer.
-TigerVNC's vncviewer is not used because its vncviewer either
-1) aggressively tries to resize the guest X11 to the host resolution
-2) shows unscaled 1280x720 guest in the center of the screen on 1920x1080 host. We need the same *mouse* area as the MPV window.
-
-*If you don't need low FPS and playing backwards every 1000ms, then compile TigerVNC with my one-line patch*
-Currently the only *easy* way to do that is if you use Arch Linux (or other distro that can create packages from PKGBUILD).
-(the PKGBUILD is in this repo)
-```
-cd PKGBUILDS/tigervnc
-makepkg -si
-```
-Now it is installed. It was patched with `dontpaint.patch` (1-2 lines) from the same folder.
-With this patch, the VNC server will send only the very first frame to the VNC client. So if you `killall mpv`, then you would still see the `xfce4-terminal`.
-
-According to my experience,
-every time you upgrade xorg-server (even if it is a minor version),
-you should recompile this package.
-
-#### 2) Install all other needed packages
-Arch Linux:
-```
-sudo pacman -S mpv i3-wm ffmpeg perl gcc dmenu bemenu bemenu-x11 dunst xfce4-terminal xorg-setxkbmap xorg-xset xorg-xrandr xdotool xorg-xdpyinfo scrot libwebp terminus-font wmctrl calc
-```
-Debian, Ubuntu, Mint, etc.:
-```
-sudo apt install mpv i3 ffmpeg perl gcc libx11-dev suckless-tools dunst xfce4-terminal x11-xkb-utils x11-xserver-utils x11-utils xdotool scrot webp xfonts-terminus wmctrl apcalc
-```
-Common packages for OpenSUSE and Fedora:
-```
-sudo dnf install mpv i3 ffmpeg perl gcc dmenu bemenu dunst xfce4-terminal setxkbmap xset xrandr xdotool xdpyinfo scrot libwebp-tools wmctrl calc
-```
-Only Fedora:
-```
-sudo dnf install terminus-fonts-console
-```
-Only OpenSUSE:
-```
-sudo dnf install terminus-bitmap-fonts
-```
-
-I am not sure if I specified enough packages needed to compile `autocutsel` in all distros.
+6) Use [wine-tkg](https://github.com/Frogging-Family/wine-tkg-git)
 
 
 ## Current Algorithm of ./cdmpv.sh
@@ -456,7 +459,12 @@ The dgVoodoo 2's .exe is a GUI for creating `dgVoodoo.conf`. You don't need to u
 Copy `D3D8.dll`, `D3D9.dll` and `dgVoodoo.conf` (maybe also `D3DImm.dll`, `DDraw.dll`) from `%dgVoodoo2UnpackedPath%/MS/x86/` into the folder containing game's .exe.
 The game will automatically use the files.
 BTW, you can replace all `.dll`s in `$WINEPREFIX/.wine/drive_c/windows/syswow64/` (but pay attention to upper/lower case, so that you would not have `d3d9.dll` AND `D3D9.dll`), but I don't know what Valve's VAC would think about that. I had to do that for `The Fruit of Grisaia` (though I still needed `dgVoodoo.conf`).
-Change the dgVoodoo.conf:
+
+*!!!*
+Use `dgVoodoo-ini/createDgVoodooConf.sh` to create your `dgVoodoo.conf`.
+*!!!*
+
+#### Changes from the original the dgVoodoo.conf:
 `Resampling` from `bilinear` to `lanzcos-3`
 `FullscreenAttributes =` to `FullscreenAttributes = Fake`
 `FPSLimit = 0` to `FPSLimit = 144` (if your monitor is 144 Hz)
@@ -467,11 +475,10 @@ In `[DirectX]`: `VRAM = 256` to `VRAM = 512`
 `dgVoodooWatermark` to `true` to check if the dgVoodoo 2 is used.
 Then change it back to `false` if all is OK.
 Detailed info on all options: https://www.pcgamingwiki.com/wiki/DgVoodoo_2
-IIRC, run the game in the window (Alt+Enter or rarely F).
 
 ## TODO: Sway as nested display server instead of i3 WM
 ### Problem 1
-[Sway] is compatible with i3 WM, but how to check if we run Wayland?
+[Sway](https://github.com/swaywm/sway) is compatible with i3 WM, but how to check if we run Wayland?
 If I go here, https://unix.stackexchange.com/questions/202891/how-to-know-whether-wayland-or-x11-is-being-used
 all commands' result is `tty` for me (I use `startx` to start i3).
 One answer says to check `WAYLAND_DISPLAY` and `DISPLAY` variables... hm...
@@ -524,13 +531,6 @@ ETH: 0xe55DB49bD551Fd805c231f71f8A4f1eAD6349EB8
 3) No Patreon because I assume I would need to provide private/beta builds to patrons. Therefore, maybe later, because my upcoming upscaler is too unready for now.
 
 ## My other related projects
-[sugoi-web] Web Frontend for Sugoi Translator
+[sugoi-web](https://github.com/arzeth/sugoi-web) Web Frontend for Sugoi Translator
 
 
-[sugoi-web] https://github.com/arzeth/sugoi-web
-[MPV]: https://github.com/mpv-player/mpv
-[i3]: https://github.com/i3/i3
-[FFmpeg]: https://github.com/FFmpeg/FFmpeg
-[Sway]: https://github.com/swaywm/sway
-[wlroots]: https://github.com/swaywm/wlroots
-[wine-tkg]: https://github.com/Frogging-Family/wine-tkg-git
