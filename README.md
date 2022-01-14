@@ -88,10 +88,12 @@ Arch Linux's tigervnc package has both Xvnc (that's VNC server with startx) and 
 <br/>*If you don't need low FPS and playing backwards every 1000ms, then compile TigerVNC with my one-line patch*
 <br/>Currently the only *easy* way to do that is if you use Arch Linux (or other distro that can create packages from PKGBUILD).
 <br/>(the PKGBUILD is in this repo)
+
 ```
 cd PKGBUILDS/tigervnc
 makepkg -si
 ```
+
 Now it is installed. It was patched with `dontpaint.patch` (1-2 lines) from the same folder.
 <br/>With this patch, the VNC server will send only the very first frame to the VNC client. So if you `killall mpv`, then you would still see the `xfce4-terminal`.
 <br/>
@@ -181,7 +183,7 @@ I am probably the only one in the world that benchmarked all possible shaders ch
 <br/>my script primarily uses ssim (https://github.com/Alexkral/AviSynthAiUpscale/issues/3, code by igv),
 <br/>but also dssim (AUR: dssim-git).
 <br/>
-<br/>Most shader chains that are in `input.conf` are for 1920x1080 screen because my monitor is 1920x1080.
+<br/>Most shader chains that are in `input.conf` are optimized for 1920x1080 (or probably 2560x1440) screen because my monitor is 1920x1080.
 <br/>All shaders upscale images 2x times (1280x720→2560x1440) except when it is explicitly written 3x or 4x in the file name.
 <br/>So they need to be downscaled afterwards if the result is higher than your screen resolution.
 <br/>Only MPV's built-in upscalers (`scale=` in `mpv.conf`) can upscale to any arbitrary resolution (1.223x, etc.)
@@ -207,58 +209,60 @@ I am probably the only one in the world that benchmarked all possible shaders ch
 <br/>Hotkeys are specified in `input.conf`.
 <br/>Every time you launch `x11wid.sh` it copies `input.conf` and removes all `ctrl+`.
 <br/>
-<br/>Press one time `a` if you want 2x and very high FPS and no ringing and smooth lines and no small details and blurred BG.
+<br/>Press one time <code>a</code> if you want 2x and very high FPS and no ringing and smooth lines and no small details and blurred BG.
 ```
 ~~/shaders/Anime4K_Clamp_Highlights.glsl:~~/shaders/Anime4K_Upscale_CNN_x2_ULF-KrigBilateral.glsl:~~/shaders/igv/SSimDownscaler_oct8.glsl
 ```
-<br/>
-Press one time `e` if you want 4x and very high FPS and no ringing and smooth lines and no small details and blurred BG.
+
+Press one time <code>e</code> if you want 4x and very high FPS and no ringing and smooth lines and no small details and blurred BG.
 ```
 ~~/shaders/igv/KrigBilateral.glsl:~~/shaders/Anime4K_Clamp_Highlights-LUMA-first-init.glsl:~~/shaders/Anime4K_Upscale_CNN_x2_UL-LUMA.glsl:~~/shaders/Anime4K_Clamp_Highlights-LUMA-apply.glsl:~~/shaders/Anime4K_Restore_CNN_Light_Soft_S.glsl:~~/shaders/Anime4K_Upscale_CNN_x2_M.glsl
 ```
-<br/>
-<br/>`e`+`e` is better than `e` but slower.
-<br/>`e` has significantly less details than `a`.
-<br/>`e`+`e` has less details than `a`.
-<br/>`e`+`e` is for 4K.
+
+<code>e</code>+<code>e</code> is better than <code>e</code> but slower.
+<br/><code>e</code> has significantly less details than <code>a</code>.
+<br/><code>e</code>+<code>e</code> has less details than <code>a</code>.
+<br/><code>e</code>+<code>e</code> is for 4K.
 <br/>
 <br/>Anime4K CNN Upscaler is the best for Kimagure Temptation because it fixes the badly downscaled animated hair.
 <br/>
 <br/>
-<br/>Press one time `shift+o` if the original has noise (Sakura no Mori Dreamers 1/2 and Honoguraki Toki no Hate Yori — they are from the same dev)
+<br/>Press one time <code>shift+o</code> if the original has noise (Sakura no Mori Dreamers 1/2 and Honoguraki Toki no Hate Yori — they are from the same dev)
 <br/>Note that the noise in hair in Daitoshokan no Hitsujikai seems to be artistical.
 <br/>Therefore, for Daitoshokan no Hitsujikai don't use Anime4K because it damages hair.
 <br/>
 <br/>
-<br/>Press one time `2` if you play Vampire's Melody (original is 1920x1080) because the animated sprite seems to be a lossy video (I also tried downscaling before upscaling but the result is worse).
+<br/>Press one time <code>2</code> if you play Vampire's Melody (original is 1920x1080) because the animated sprite seems to be a lossy video (I also tried downscaling before upscaling but the result is worse).
 ```
 ~~/shaders/Anime4K_Restore_CNN_Light_Soft_VL-YYY.glsl
 ```
 <br/>
-<br/>Press two times `2` if you play the 1920x1080 game at 1920x1080 screen, and when a character's face is near, you see sprites are low-resolution,
+<br/>Press two times <code>2</code> if you play the 1920x1080 game at 1920x1080 screen, and when a character's face is near, you see sprites are low-resolution,
 in this case you need this:
+
 ```
 ~~/shaders/Anime4K_Restore_CNN_Light_Soft_VL-YYY-half.glsl
 ```
-or in some cases just `./cdmpv 1280x720 60 60` for this game, although somes VNs use very bad cheap downscaling when the output resolution is lower than original (Kinkoi on Unity, at least the early version)... or less likely it's a bug in Wine.
+
+or in some cases just <code>./cdmpv 1280x720 60 60</code> for this game, although somes VNs use very bad cheap downscaling when the output resolution is lower than original (Kinkoi on Unity, at least the early version)... or less likely it's a bug in Wine.
 <br/>
-<br/>Press three times `2` if you play Monkey!¡ because the original has mega aliasing.
+<br/>Press three times <code>2</code> if you play Monkey!¡ because the original has mega aliasing.
+
 ```
 ~~/shaders/Anime4K_Restore_CNN_Moderate_Soft_VL-YYY.glsl
 ```
-<br/>
-<br/>
-<br/>For Wanko to Kurasou (800x600->4K) press three or four times `shift+q` (depending on FPS and tastes).
-<br/>If that's too slow, then press two times `e`.
+
+<br/>For Wanko to Kurasou (800x600->4K) press three or four times <code>shift+q</code> (depending on FPS and tastes).
+<br/>If that's too slow, then press two times <code>e</code>.
 <br/>
 <br/>
 Press
-<br/>`y` (less details but less pixelated)
-<br/>or `shift+y` (less details but less pixelated and almost no color noise)
-<br/>or `f` (no pixelation)
+<br/><code>y</code> (less details but less pixelated)
+<br/>or <code>shift+y</code> (less details but less pixelated and almost no color noise)
+<br/>or <code>f</code> (no pixelation)
 <br/>if you play the old version of YU-NO.
 <br/>
-<br/>Press one time `shift+q` (good for 800x600 → 1920x/2560x; the best for Sugar * Style 1280x720→1920x1080)
+<br/>Press one time <code>shift+q</code> (good for 800x600 → 1920x/2560x; the best for Sugar * Style 1280x720→1920x1080)
 ```
 ~~/shaders/Anime4K_Clamp_Highlights-LUMA-first-init.glsl:~~/shaders/Anime4K_Upscale_GAN_x3_VL-LUMA.glsl:~~/shaders/Anime4K_Clamp_Highlights-LUMA-apply.glsl:~~/shaders/igv/KrigBilateral.glsl
 ```
@@ -321,7 +325,7 @@ AiUpscale_HQ_4x_LineArt is worse than _3x, at least for 2D,
 
 
 ## About shaders
-<br/>When 1280x720→1920x1080, then AiUpscale_HQ_3x_LineArt has much better SSIM than AiUpscale_HQ_2x_LineArt for 2D sprites, but the overall SSIM is worse (~0.00234 vs ~0.00263) because background images are not very anime.
+When 1280x720→1920x1080, then AiUpscale_HQ_3x_LineArt has much better SSIM than AiUpscale_HQ_2x_LineArt for 2D sprites, but the overall SSIM is worse (~0.00234 vs ~0.00263) because background images are not very anime.
 <br/>`Anime4K_Clamp_Highlights.glsl` is needed because upscalers accidentally create very bright micro areas.
 <br/>Anime4K_Upscale_*CNN*_ hates small details. I tried to fix it: `Anime4K_Upscale_CNN_x2_ULF-RGB-noise.glsl` but it's not always good.
 <br/>TsubaUP is good for everything except 2D (especially hair is bad).
@@ -366,20 +370,23 @@ or
 __GLX_VENDOR_LIBRARY_NAME=mesa LIBGL_ALWAYS_SOFTWARE=1 VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/lvp_icd.x86_64.json  MESA_LOADER_DRIVER_OVERRIDE=zink
 ```
 <br/>
-<br/>BTW, when using NVIDIA GPU (I don't know about other GPUs) inside *nested* X11 there is a problem with `glxinfo` and videos in some VNs:
+<br/>BTW, when using NVIDIA GPU (I don't know about other GPUs) inside *nested* X11 there is a problem with <code>glxinfo</code> and videos in some VNs:
 <br/>E.g. Akeiro Kaikitan as soon as it tries to play a video, the wine process finishes with X11 error.
 <br/>Also I found out that Akeiro Kaikitan saves the read messages only after manually exiting the whole game, not when returning to main menu.
 <br/>Offending videos are open in a new window. Maybe it tries to create a too large window?
 <br/>
-<br/>
-<br/>Uninstall DXVK:
+
+Uninstall DXVK:
+
 ```
 /usr/share/dxvk/setup_dxvk.sh uninstall
 ```
-<br/>Install DXVK:
+
+Install DXVK:
 ```
 /usr/share/dxvk/setup_dxvk.sh install --with-d3d10 --symlink
 ```
+
 Don't forget about `WINEPREFIX=`
 
 5) In one case (Schatten) as soon as you start it, there's a unskippable video which is displayed black and played for 1 minute.
@@ -397,12 +404,12 @@ Don't forget about `WINEPREFIX=`
 5) `cdmpvTempBgTasks.sh`: Launch `i3` in the guest X11, the i3 uses `i3-child-config` file from the same folder as `cdmpv.sh`. I chose to use i3 as a WM for a guest X11 because it allows to easily remove any borders and panels, uses little RAM, easily configurable.
 6) `cdmpvTempBgTasks.sh`: Launch TigerVNC's `vncviewer`. Don't forget that it should be patched.
 7) `cdmpvTempBgTasks.sh`: Execute `./x11wid.sh`. It launches `ffmpeg` that grabs guest X11's screen which it pipes to `mpv`.
-`mpv` is launched with `--wid={vncviewer's window id}` which makes `mpv` a child window of the VNC client.
-You look at `mpv` but all keyboard & mouse control goes to `vncviewer`.
-So if `mpv` crashes or you updated one of `.glsl` or `.conf`, then `killall mpv`, then `./x11wid.sh`.
-You can 100% safely Ctrl+c `x11wid.sh`.
-If you decide to change FPS, then `./x11wid.sh 1280x720 60 30` or edit `.env-of-current-process`
-If you specify too high FPS for your GPU then you would get high latency for unknown reason.
+<br/>`mpv` is launched with `--wid={vncviewer's window id}` which makes `mpv` a child window of the VNC client.
+<br/>You look at `mpv` but all keyboard & mouse control goes to `vncviewer`.
+<br/>So if `mpv` crashes or you updated one of `.glsl` or `.conf`, then `killall mpv`, then `./x11wid.sh`.
+<br/>You can 100% safely Ctrl+c `x11wid.sh`.
+<br/>If you decide to change FPS, then `./x11wid.sh 1280x720 60 30` or edit `.env-of-current-process`
+<br/>If you specify too high FPS for your GPU then you would get high latency for unknown reason.
 
 If you want to close `cdmpv.sh`, then Ctrl+c it and it will automatically kill all the processes it spawned.
 
@@ -413,7 +420,7 @@ then see what you need to change in your config.
 0) After launching need to wait 20 seconds (because that's how many `sleep`s are in the scripts).
 1) if no i3 or if AUTOSWITCH is unset or 0, then print the instruction, then sleep for 3 seconds.
 2) Launch TigerVNC's `Xvnc` which provides a guest (child) X11 server (X11 in X11) and a VNC server.
-BTW, `killall Xvnc` kills the guest X11 just like `killall i3` kills all browsers and etc.
+<br/>BTW, <code>killall Xvnc</code> kills the guest X11 just like <code>killall i3</code> kills all browsers and etc.
 3) Launch `i3` in the guest X11, the i3 uses `i3-child-config` file from the same folder as `cdmpv.sh`. I chose to use i3 as a WM for a guest X11 because it allows to easily remove any borders and panels, uses little RAM, easily configurable.
 4) Launch `ffmpeg` that grabs guest X11's screen and redirects it to `/dev/video8` (rawvideo->rawvideo, no videocodecs) with the help of V4L2. By the way, you can change `/dev/video8` in the `config.sh` file.
 5) if i3 and AUTOSWITCH={non-zero number}, then switch to the virtual desktop {number} (counting from 1).
@@ -422,26 +429,26 @@ BTW, `killall Xvnc` kills the guest X11 just like `killall i3` kills all browser
 8) Switch `mpv` into a window mode, and set the window size to the largest available.
 9) Switch `gtkvncviewer` into a window mode, and resize it to a resolution larger than the real monitor's resolution. Otherwise `gtkvncviewer` would resize (xrandr) the guest X11 resolution every time, which would also break `ffmpeg -f x11grab`.
 10) Move `gtkvncviewer` to the position where only one row of pixels (e.g. w=1920px, h=1px) of its menu can be seen and clicked.
-That 1 pixel row is useful, because sometimes you'll *need* to ungrab the keyboard: move your mouse to the very top and then use your keyboard. Only 1 pixel row because otherwise the displayed-by-mpv cursor and the actual cursor should be in one position.
+<br/>That 1 pixel row is useful, because sometimes you'll *need* to ungrab the keyboard: move your mouse to the very top and then use your keyboard. Only 1 pixel row because otherwise the displayed-by-mpv cursor and the actual cursor should be in one position.
 11) Launch `picom` (former `compton`. Arch Linux's `picom` package provides a symlink compton->picom).
-We need it to make `gtkvncviewer` 100% transparent.
+<br/>We need it to make `gtkvncviewer` 100% transparent.
 12) Focus on `gtkvncviewer`.
-In the end you actually see `mpv` but control `gtkvncviewer`.
-Step 11 is needed because I couldn't find a way to display `mpv` always above `gtkvncviewer` AND ban focus grabbing for `mpv`.
+<br/>In the end you actually see `mpv` but control `gtkvncviewer`.
+<br/>Step 11 is needed because I couldn't find a way to display `mpv` always above `gtkvncviewer` AND ban focus grabbing for `mpv`.
 
 
 
 ## My failed attempts with VMs, the guest is Windows 10 x64, the host is Linux
 I couldn't run Magpie in VirtualBox. Maybe because VirtualBox GPU Driver supports only DirectX 9.
-I could run Magpie in VMware Workstation 16.1.2, but in most games FPS is very low with Anime4K and ACNet.
-The FPS is low (8), but for some reason my CPU Load is only 33% and GPU load is very low. I tried experimenting with number of cores, nice level, etc.
-Of course I installed the VM guest drivers.
-Virtualization is enabled in UEFI and VMware. Motherboard: MSI B450M PRO-M2 MAX (MS-7B84).
-On the other hand some software can cause 100% load (`nvtop`) to GTX 1660 Super in VMware, so it's not software acceleration.
-If I force CPU powersave mode (max clock rate decrease from 3550 to 1550 MHz), then FPS in VMware is 3 or 4, not 8.
-Note that I have only one RAM module (16 GB@3000MHz).
-And when FPS is low, sound stutters every ~200 ms. And when I just play the game in VMware without Magpie, FPS is good, but every ~40 secs, sound stutters for 2-3 seconds.
-Maybe problems with VMware are because I use the NVIDIA proprietary driver.
+<br/>I could run Magpie in VMware Workstation 16.1.2, but in most games FPS is very low with Anime4K and ACNet.
+<br/>The FPS is low (8), but for some reason my CPU Load is only 33% and GPU load is very low. I tried experimenting with number of cores, nice level, etc.
+<br/>Of course I installed the VM guest drivers.
+<br/>Virtualization is enabled in UEFI and VMware. Motherboard: MSI B450M PRO-M2 MAX (MS-7B84).
+<br/>On the other hand some software can cause 100% load (`nvtop`) to GTX 1660 Super in VMware, so it's not software acceleration.
+<br/>If I force CPU powersave mode (max clock rate decrease from 3550 to 1550 MHz), then FPS in VMware is 3 or 4, not 8.
+<br/>Note that I have only one RAM module (16 GB@3000MHz).
+<br/>And when FPS is low, sound stutters every ~200 ms. And when I just play the game in VMware without Magpie, FPS is good, but every ~40 secs, sound stutters for 2-3 seconds.
+<br/>Maybe problems with VMware are because I use the NVIDIA proprietary driver.
 
 
 ## Alternatives with far worse upscaling
@@ -451,85 +458,85 @@ Before I started using this hacky VNC approach, I had been using everywhere DXVK
 __GL_SHARPEN_VALUE=90 __GL_SHARPEN_IGNORE_FILM_GRAIN=90
 ```
 Although the prefix is `__GL_`, they apply to Vulkan too.
-Some VNs like `Shinigami no Kiss Wa Wakare no Aji` and `Wanko to Kurasou` somehow don't use DirectX (they use DirectDraw I think), so no sharpening there (and dgVoodoo 2 doesn't work too).
+<br/>Some VNs like `Shinigami no Kiss Wa Wakare no Aji` and `Wanko to Kurasou` somehow don't use DirectX (they use DirectDraw I think), so no sharpening there (and dgVoodoo 2 doesn't work too).
 ### Alternative to cdmpv
 dgVoodoo 2 (Freeware, not Open Source).
-http://dege.freeweb.hu/dgVoodoo2/dgVoodoo2/#latest-stable-version (no https)
+<br/>http://dege.freeweb.hu/dgVoodoo2/dgVoodoo2/#latest-stable-version (no https)
+<br/>
+<br/>This alternative produces better output than the NVIDIA-only sharpening.
+<br/>The dgVoodoo 2's .exe is a GUI for creating `dgVoodoo.conf`. You don't need to use it.
+<br/>Copy `D3D8.dll`, `D3D9.dll` and `dgVoodoo.conf` (maybe also `D3DImm.dll`, `DDraw.dll`) from `%dgVoodoo2UnpackedPath%/MS/x86/` into the folder containing game's .exe.
+<br/>The game will automatically use the files.
+<br/>BTW, you can replace all `.dll`s in `$WINEPREFIX/.wine/drive_c/windows/syswow64/` (but pay attention to upper/lower case, so that you would not have `d3d9.dll` AND `D3D9.dll`), but I don't know what Valve's VAC would think about that. I had to do that for `The Fruit of Grisaia` (though I still needed `dgVoodoo.conf`).
 
-This alternative produces better output than the NVIDIA-only sharpening.
-The dgVoodoo 2's .exe is a GUI for creating `dgVoodoo.conf`. You don't need to use it.
-Copy `D3D8.dll`, `D3D9.dll` and `dgVoodoo.conf` (maybe also `D3DImm.dll`, `DDraw.dll`) from `%dgVoodoo2UnpackedPath%/MS/x86/` into the folder containing game's .exe.
-The game will automatically use the files.
-BTW, you can replace all `.dll`s in `$WINEPREFIX/.wine/drive_c/windows/syswow64/` (but pay attention to upper/lower case, so that you would not have `d3d9.dll` AND `D3D9.dll`), but I don't know what Valve's VAC would think about that. I had to do that for `The Fruit of Grisaia` (though I still needed `dgVoodoo.conf`).
-
-*!!!*
-Use `dgVoodoo-ini/createDgVoodooConf.sh` to create your `dgVoodoo.conf`.
-*!!!*
+*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*
+<br/>Use `dgVoodoo-ini/createDgVoodooConf.sh` to create your `dgVoodoo.conf`.
+<br/>*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*
 
 #### Changes from the original the dgVoodoo.conf:
 `Resampling` from `bilinear` to `lanzcos-3`
-`FullscreenAttributes =` to `FullscreenAttributes = Fake`
-`FPSLimit = 0` to `FPSLimit = 144` (if your monitor is 144 Hz)
-`AppControlledScreenMode` to `false`
-`DisableAltEnterToToggleScreenMode` to `false`
-In `[DirectX]`: `Resolution = unforced` to `Resolution = 1920x1080@144` (*NOTE*: it should remain `unforced` if you don't use dgVoodoo's upscaling)
-In `[DirectX]`: `VRAM = 256` to `VRAM = 512`
-`dgVoodooWatermark` to `true` to check if the dgVoodoo 2 is used.
-Then change it back to `false` if all is OK.
-Detailed info on all options: https://www.pcgamingwiki.com/wiki/DgVoodoo_2
+<br/>`FullscreenAttributes =` to `FullscreenAttributes = Fake`
+<br/>`FPSLimit = 0` to `FPSLimit = 144` (if your monitor is 144 Hz)
+<br/>`AppControlledScreenMode` to `false`
+<br/>`DisableAltEnterToToggleScreenMode` to `false`
+<br/>In `[DirectX]`: `Resolution = unforced` to `Resolution = 1920x1080@144` (*NOTE*: it should remain `unforced` if you don't use dgVoodoo's upscaling)
+<br/>In `[DirectX]`: `VRAM = 256` to `VRAM = 512`
+<br/>`dgVoodooWatermark` to `true` to check if the dgVoodoo 2 is used.
+<br/>Then change it back to `false` if all is OK.
+<br/>Detailed info on all options: https://www.pcgamingwiki.com/wiki/DgVoodoo_2
 
 ## TODO: Sway as nested display server instead of i3 WM
 ### Problem 1
 [Sway](https://github.com/swaywm/sway) is compatible with i3 WM, but how to check if we run Wayland?
-If I go here, https://unix.stackexchange.com/questions/202891/how-to-know-whether-wayland-or-x11-is-being-used
-all commands' result is `tty` for me (I use `startx` to start i3).
-One answer says to check `WAYLAND_DISPLAY` and `DISPLAY` variables... hm...
+<br/>If I go here, https://unix.stackexchange.com/questions/202891/how-to-know-whether-wayland-or-x11-is-being-used
+<br/>all commands' result is `tty` for me (I use `startx` to start i3).
+<br/>One answer says to check `WAYLAND_DISPLAY` and `DISPLAY` variables... hm...
 
 ### Problem 2
 `xdotool`'s replacements `wtype` and https://github.com/ReimuNotMoe/ydotool
-don't seem to support commands: `windowstate`, `windowsize`, `windowmove`, `get_desktop`.
-One of Wayland's (security) features is nobody has right to know what is in other windows.
-
-But maybe `i3-msg`/`swaymsg` have commands similar to `xdotool`'s? Need to check.
+<br/>don't seem to support commands: `windowstate`, `windowsize`, `windowmove`, `get_desktop`.
+<br/>One of Wayland's (security) features is nobody has right to know what is in other windows.
+<br/>
+<br/>But maybe `i3-msg`/`swaymsg` have commands similar to `xdotool`'s? Need to check.
 
 ### Problem 3
 If the host is Wayland, can a guest be X11? I don't know, but I guess 99%.
-But if a guest would be Wayland-based, then we need to replace Xvnc with something (wayvnc?).
+<br/>But if a guest would be Wayland-based, then we need to replace Xvnc with something (wayvnc?).
 
 ### Problem 4
 `ffmpeg -f x11grab` doesn't work.
-I guess `-f kmsgrab` probably just grabs the screen that is displayed on the real monitor, not tested.
-Maybe somehow use `ffmpeg` with `pipewire`?
-The only way to grab a window's contents on Wayland I know is to use OBS (but I didn't test):
+<br/>I guess `-f kmsgrab` probably just grabs the screen that is displayed on the real monitor, not tested.
+<br/>Maybe somehow use `ffmpeg` with `pipewire`?
+<br/>The only way to grab a window's contents on Wayland I know is to use OBS (but I didn't test):
 
 ## Lessons learned
 Downscaling algorithm is very important.
-catmull_rom (short: catrom) and lanczos are the best.
-(I'll compare lanczos vs ginseng later).
-catmull_rom also somehow hides AiUpscale's ringing.
-There are very different emotions from a picture depending
-on which dscaler was used: mitchell, catmull_rom, lanczos, etc.
-Bicubic is trash, by the way.
-ewa_lanczos* give too blurry picture.
-I use `feh` to look at how much info is lost and how smooth are lines.
-
-Also I made an experiment:
-I downscaled 1920x1080 original to 1280x720 with every dscaler, then upscaled it back with one upscaler.
-I am lazy to search my result file, but lanczos and catmull_rom are the best (or it was spline16/36/64 with almost the same score, I forgot).
-
-At least for 2D.
+<br/>catmull_rom (short: catrom) and lanczos are the best.
+<br/>(I'll compare lanczos vs ginseng later).
+<br/>catmull_rom also somehow hides AiUpscale's ringing.
+<br/>There are very different emotions from a picture depending
+<br/>on which dscaler was used: mitchell, catmull_rom, lanczos, etc.
+<br/>Bicubic is trash, by the way.
+<br/>ewa_lanczos* give too blurry picture.
+<br/>I use `feh` to look at how much info is lost and how smooth are lines.
+<br/>
+<br/>Also I made an experiment:
+<br/>I downscaled 1920x1080 original to 1280x720 with every dscaler, then upscaled it back with one upscaler.
+<br/>I am lazy to search my result file, but lanczos and catmull_rom are the best (or it was spline16/36/64 with almost the same score, I forgot).
+<br/>
+<br/>At least for 2D.
 
 ## License
-Everything that **I** did in `cdmpv` is under CC0 (Public Domain).
-Everything that was not done by me is obviously under other licenses.
-
-If you use `cdmpv` and like it very much, you can donate:
+Everything that **\*I\*** did in `cdmpv` is under CC0 (Public Domain).
+<br/>Everything that was not done by me is obviously under other licenses.
+<br/>
+<br/>If you use `cdmpv` and like it very much, you can donate:
 1) Binance
 https://www.binance.com/en/my/wallet/account/payment/send
-Pay ID = 221728070, nickname = arzeth, any cryptocurrency.
+<br/>Pay ID = 221728070, nickname = arzeth, any cryptocurrency.
 2) If you don't use Binance, then
-BTC: 1CjSZ8MWYEs9QVnbbMsLWgm9F7MXjvkxfK
-ETH: 0xe55DB49bD551Fd805c231f71f8A4f1eAD6349EB8
+<br/>BTC: 1CjSZ8MWYEs9QVnbbMsLWgm9F7MXjvkxfK
+<br/>ETH: 0xe55DB49bD551Fd805c231f71f8A4f1eAD6349EB8
 3) No Patreon because I assume I would need to provide private/beta builds to patrons. Therefore, maybe later, because my upcoming upscaler is too unready for now.
 
 ## My other related projects
