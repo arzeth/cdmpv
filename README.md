@@ -185,7 +185,7 @@ Most shader chains that are in `input.conf` are for 1920x1080 screen because my 
 All shaders upscale images 2x times (1280x720→2560x1440) except when it is explicitly written 3x or 4x in the file name.
 So they need to be downscaled afterwards if the result is higher than your screen resolution.
 Only MPV's built-in upscalers (`scale=` in `mpv.conf`) can upscale to any arbitrary resolution (1.223x, etc.)
-If the upscaled result image is the same size as your screen, then the sharpener is needed (`~~/shaders/igv/SSimDownscaler.glsl`) or Light_Soft shader `~~/shaders/Anime4K_Restore_CNN_Light_Soft_VL-RGB-half.glsl` (or not -half), test yourself. Sometimes they are already included (especially in case of Anime4K *CNN* Upscalers that produces lines that are thicker than needed).
+If the upscaled result image is the same size as your screen, then the sharpener is needed (`~~/shaders/igv/SSimDownscaler.glsl`) or Light_Soft shader `~~/shaders/Anime4K_Restore_CNN_Light_Soft_VL-YYY-half.glsl` (or not -half), test yourself. Sometimes they are already included (especially in case of Anime4K *CNN* Upscalers that produces lines that are thicker than needed).
 So if you have 4k/5k display, then add either Anime4K -UL or -UL-RGB or -L variant or ~~/shaders/superxbr.glsl (it's like lanczos but lines are much smoother) at the end of string in `input.conf` if your GPU allows it.
 
 If you are at the same tab where you launched `cdmpv.sh`,
@@ -233,19 +233,19 @@ Therefore, for Daitoshokan no Hitsujikai don't use Anime4K because it damages ha
 
 Press one time `2` if you play Vampire's Melody (original is 1920x1080) because the animated sprite seems to be a lossy video (I also tried downscaling before upscaling but the result is worse).
 ```
-~~/shaders/Anime4K_Restore_CNN_Light_Soft_VL-RGB.glsl
+~~/shaders/Anime4K_Restore_CNN_Light_Soft_VL-YYY.glsl
 ```
 
 Press two times `2` if you play the 1920x1080 game at 1920x1080 screen, and when a character's face is near, you see sprites are low-resolution,
 in this case you need this:
 ```
-~~/shaders/Anime4K_Restore_CNN_Light_Soft_VL-RGB-half.glsl
+~~/shaders/Anime4K_Restore_CNN_Light_Soft_VL-YYY-half.glsl
 ```
 or in some cases just `./cdmpv 1280x720 60 60` for this game, although somes VNs use very bad cheap downscaling when the output resolution is lower than original (Kinkoi on Unity, at least the early version)... or less likely it's a bug in Wine.
 
 Press three times `2` if you play Monkey!¡ because the original has mega aliasing.
 ```
-~~/shaders/Anime4K_Restore_CNN_Moderate_Soft_VL-RGB.glsl
+~~/shaders/Anime4K_Restore_CNN_Moderate_Soft_VL-YYY.glsl
 ```
 
 For Wanko to Kurasou (800x600->4K) press three or four times `shift+q` (depending on FPS and tastes).
@@ -265,7 +265,7 @@ Press one time `shift+q` (good for 800x600 → 1920x/2560x; the best for Sugar *
 
 Sometimes `w` is the best (e.g. Koikari Love for Hire), but sometimes it has ringing especially in fonts.
 ```
-~~/shaders/igv/KrigBilateral.glsl::~~/shaders/avisynth/mpv user shaders/LineArt/3x/AiUpscale_HQ_3x_LineArtFCla.glsl:~~/shaders/Anime4K_Restore_CNN_Light_VL-RGB.glsl
+~~/shaders/igv/KrigBilateral.glsl::~~/shaders/avisynth/mpv user shaders/LineArt/3x/AiUpscale_HQ_3x_LineArtFCla.glsl:~~/shaders/Anime4K_Restore_CNN_Light_VL-YYY.glsl
 ```
 Or rarely `n` is better (same as `w` but without Restore). The `Restore` shaders fix some ringing for AiUpscale.
 Also lines are aliased (in other words, ladder) for some VNs with AiUpscale, which doesn't show up on SSIM test, but we humans see it.
