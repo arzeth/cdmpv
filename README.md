@@ -188,7 +188,7 @@ I am probably the only one in the world that benchmarked all possible shaders ch
 <br/>So they need to be downscaled afterwards if the result is higher than your screen resolution.
 <br/>Only MPV's built-in upscalers (`scale=` in `mpv.conf`) can upscale to any arbitrary resolution (1.223x, etc.)
 <br/>If the upscaled result image is the same size as your screen, then the sharpener is needed (`~~/shaders/igv/SSimDownscaler.glsl`) or Light_Soft shader `~~/shaders/Anime4K_Restore_CNN_Light_Soft_VL-YYY-half.glsl` (or not -half), test yourself. Sometimes they are already included (especially in case of Anime4K *CNN* Upscalers that produces lines that are thicker than needed).
-<br/>So if you have 4k/5k display, then add either Anime4K -UL or -UL-RGB or -L variant or ~~/shaders/superxbr.glsl (it's like lanczos but lines are much smoother) at the end of string in `input.conf` if your GPU allows it.
+<br/>So if you have 4k/5k display, then add either Anime4K -UL or -UL-YYY or -L variant or ~~/shaders/superxbr.glsl (it's like lanczos but lines are much smoother) at the end of string in `input.conf` if your GPU allows it.
 <br/>
 <br/>If you are at the same tab where you launched `cdmpv.sh`,
 <br/>then that means if you press any key it will be sent to MPV (because cdmpv.sh launches cdmpvTempBgTasks.sh in bg which launches x11wid.sh in bg).
@@ -327,7 +327,7 @@ AiUpscale_HQ_4x_LineArt is worse than _3x, at least for 2D,
 ## About shaders
 When 1280x720→1920x1080, then AiUpscale_HQ_3x_LineArt has much better SSIM than AiUpscale_HQ_2x_LineArt for 2D sprites, but the overall SSIM is worse (~0.00234 vs ~0.00263) because background images are not very anime.
 <br/>`Anime4K_Clamp_Highlights.glsl` is needed because upscalers accidentally create very bright micro areas.
-<br/>Anime4K_Upscale_*CNN*_ hates small details. I tried to fix it: `Anime4K_Upscale_CNN_x2_ULF-RGB-noise.glsl` but it's not always good.
+<br/>Anime4K_Upscale_*CNN*_ hates small details. I tried to fix it: `Anime4K_Upscale_CNN_x2_ULF-KrigBilateral-noise.glsl` but it's not always good.
 <br/>TsubaUP is good for everything except 2D (especially hair is bad).
 <br/>FSRCNNX is kinda like TsubaUP but slower but better hair.
 <br/>I tested only VNs, but FSRCNNX_x2_56-16-4-1.glsl is always worse than _16.
