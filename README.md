@@ -13,7 +13,7 @@ Image quality is much better than Magpie.
 <br/>(Although after 150 hours that I spent on `cdmpv` I want now everything to be beautiful in VNs, even background images.).
 <br/>
 <br/>And since I want more FPS,
-<br/>and play without nested display server,
+<br/>and play without a nested display server,
 <br/>and also want to play SC2 at 70-75 fps when the original FPS drops to 46 in big fights because my Ryzen 2600 is not enough,
 <br/>now I am developing the overengineered ultrafast (upscaling only changed regions, switching upscalers on-the-fly to achieve target fps, potentially zero-copy) upscaler/first-in-the-world-universal-upframerater without using MPV and with using a proxy window instead of nested X11. It will probably be ready in February 2022.
 <br/>In other words, `cdmpv` is a temporary measure.
@@ -544,15 +544,6 @@ Which downscaling algorithm is used is very important.
 ## License
 Everything that **\*I\*** did in `cdmpv` is under CC0 (Public Domain).
 <br/>Everything that was not done by me is obviously under other licenses.
-<br/>
-<br/>If you use `cdmpv` and like it very much, you can donate:
-1) Binance
-https://www.binance.com/en/my/wallet/account/payment/send
-<br/>Pay ID = 221728070, nickname = arzeth, any cryptocurrency.
-2) If you don't use Binance, then
-<br/>BTC: 1CjSZ8MWYEs9QVnbbMsLWgm9F7MXjvkxfK
-<br/>ETH: 0xe55DB49bD551Fd805c231f71f8A4f1eAD6349EB8
-3) No Patreon because I assume I would need to provide private/beta builds to patrons. Therefore, maybe later, because my upcoming upscaler is too unready for now.
 
 ## My other related projects
 [sugoi-web](https://arzeth.github.io/sugoi-web/) Web Frontend for Sugoi-Japanese-Translator
