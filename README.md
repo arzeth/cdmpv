@@ -76,6 +76,9 @@ X11=xorg. It is a display server. The other one in Wayland.
 <br/>
 <br/>i3 WM launched in the guest X11 uses the `i3-child-config` file here.
 
+## Why is VNC needed?
+It is the only way to control a nested X11.
+<br/>By the way, I'll soon add an alternative script that uses `kwin_wayland` instead of X11/Xvnc.
 
 ## Dependencies to use cdmpv
 #### 1) Install VNC server and client
