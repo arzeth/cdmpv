@@ -79,10 +79,23 @@ then
 	for a in "${H[@]}"
 	do
 		if [[ ! -r "$a" ]]; then
-			echo "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 			continue;
 		fi
-		echo aeurcaoeturoae
+		half=1 u=YYY bash "$s/resluma.sh" "$a"
+	done
+fi
+
+if [[ ! -r "$s/Anime4K_Restore_CNN_Light_VL-YYY-half.glsl" ]]
+then
+	declare -a H=(
+		"$s/Anime4K_Restore_CNN_Light_VL.glsl"
+		"$s/Anime4K_Restore_CNN_Light_S.glsl"
+	)
+	for a in "${H[@]}"
+	do
+		if [[ ! -r "$a" ]]; then
+			continue;
+		fi
 		half=1 u=YYY bash "$s/resluma.sh" "$a"
 	done
 fi
