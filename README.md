@@ -213,26 +213,28 @@ I am probably the only one in the world that benchmarked all possible shaders ch
 <br/>Or you can `killall mpv`, create a new tab in host X11/Wayland and `./x11wid.sh`.
 <br/>
 <br/>Every hotkey in `input.conf` cycles through 1-5 shaders.
-<br/>If it says press `2` three times, but you accidentally press it four times, press `0`, then repeat what you wanted.
+<br/>If it is written "press `2` three times", but you accidentally press it four times, press `0`, then repeat what you wanted.
 <br/>
-<br/>When you switch a shader chain, you'll see so in the MPV's log.
-<br/>To switch a shader you should press a key, *then wait while it renders a new frame with it*,
+<br/>When you switch a shader chain, you'll see a message in the MPV's log (it is written to stdout, it is not written to a file).
+<br/>To switch a shader chain, you should press a key, *then wait while it renders a new frame with it* (up to 2 seconds unless they aren't in your shader cache because you never used them),
 <br/>then go back to the terminal to look if you got the correct "glsl-shaders"
 <br/>
 <br/>Shader cache is stored in `~/.config/mpv/shader_cache` (you can change that in config.sh)
 <br/>Shaders are compiled by CPU of course.
-<br/>Heavy shaders are compiled 20 seconds.
-<br/>You get blue screen when not enough VRAM or shader compilation failed.
+<br/>The heaviest shaders are compiled ~20 seconds on Ryzen 2600.
+<br/>You get blue screen when shader compilation failed or not enough VRAM to use a shader chain.
 <br/>
 <br/>Hotkeys are specified in `input.conf`.
-<br/>Every time you launch `x11wid.sh` it copies `input.conf` and removes all `ctrl+`.
+<br/>Every time you launch `x11wid.sh`, it copies `input.conf` and removes all `ctrl+` (because `ctrl+` hotkeys conflict with the terminal's).
 <br/>
-<br/>Press one time <code>a</code> if you want 2x and very high FPS and no ringing and smooth lines and no small details and blurred BG.
+<br/>This shader chain is used by default at every launch for all resolutions.
+2x upscaling (e.g. 1280x720→2560x1440) and very high FPS, smooth lines, no ringing. Disadvantages: blurred BG, very similar colors are blended, no small details (e.g. grain disappears from hair in Daitoshokan no Hitsujikai); lines are thicker (than the original) without Anime4K_Restore.
+The hotkey: press one time <code>a</code>.
 ```
-~~/shaders/Anime4K_Clamp_Highlights.glsl:~~/shaders/Anime4K_Upscale_CNN_x2_ULF-KrigBilateral.glsl:~~/shaders/igv/SSimDownscaler_oct8.glsl
+~~/shaders/Anime4K_Clamp_Highlights.glsl:~~/shaders/Anime4K_Upscale_CNN_x2_ULF-KrigBilateral.glsl:~~/shaders/Anime4K_Restore_CNN_Light_S-YYY-half.glsll
 ```
 
-Press one time <code>e</code> if you want 4x and very high FPS and no ringing and smooth lines and no small details and blurred BG.
+Press one time <code>e</code> if you want the same as <code>a</code>, but 4x upscaling.
 ```
 ~~/shaders/igv/KrigBilateral.glsl:~~/shaders/Anime4K_Clamp_Highlights-LUMA-first-init.glsl:~~/shaders/Anime4K_Upscale_CNN_x2_UL-LUMA.glsl:~~/shaders/Anime4K_Clamp_Highlights-LUMA-apply.glsl:~~/shaders/Anime4K_Restore_CNN_Light_Soft_S.glsl:~~/shaders/Anime4K_Upscale_CNN_x2_M.glsl
 ```
@@ -240,14 +242,10 @@ Press one time <code>e</code> if you want 4x and very high FPS and no ringing an
 <code>e</code>+<code>e</code> is better than <code>e</code> but slower.
 <br/><code>e</code> has significantly less details than <code>a</code>.
 <br/><code>e</code>+<code>e</code> has less details than <code>a</code>.
-<br/><code>e</code>+<code>e</code> is for 4K.
 <br/>
-<br/>Anime4K CNN Upscaler is the best for Kimagure Temptation because it fixes the badly downscaled animated hair.
+<br/>Anime4K CNN Upscaler (<code>+a</code>, <code>+e/+e+e</code>) is the best for Kimagure Temptation because it fixes aliasing which is caused by the VN itself badly downscaling the animated hair.
 <br/>
 <br/>
-<br/>Press one time <code>shift+o</code> if the original has noise (Sakura no Mori Dreamers 1/2 and Honoguraki Toki no Hate Yori — they are from the same dev)
-<br/>Note that the noise in hair in Daitoshokan no Hitsujikai seems to be artistical.
-<br/>Therefore, for Daitoshokan no Hitsujikai don't use Anime4K because it damages hair.
 <br/>
 <br/>
 <br/>Press one time <code>2</code> if you play Vampire's Melody (original is 1920x1080) because the animated sprite seems to be a lossy video (I also tried downscaling before upscaling but the result is worse).

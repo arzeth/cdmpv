@@ -139,6 +139,7 @@ DISPLAY="${HOST_DISPLAY}" WAYLAND_DISPLAY="${HOST_WAYLAND_DISPLAY}" "$MPV" \
 --no-input-cursor \
 --no-input-vo-keyboard \
 --stop-screensaver=no \
+--input-ipc-server="${DIR}/mpvsocket" \
 --config-dir="$MPV__CONFIG_DIR" \
 --input-conf="$MPV__INPUT_CONF" \
 --gpu-shader-cache-dir="$MPV__SHADER_CACHE" \
