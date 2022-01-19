@@ -133,7 +133,7 @@ DISPLAY="${HOST_DISPLAY}" WAYLAND_DISPLAY="${HOST_WAYLAND_DISPLAY}" "$MPV" \
 -v --no-audio --keepaspect=yes --keep-open=no --no-initial-audio-sync --profile=qrawvideo \
 \
 --title="cd_mp_v" \
---wid=`DISPLAY="${HOST_DISPLAY}" WAYLAND_DISPLAY="${HOST_WAYLAND_DISPLAY}" wmctrl -l 2>/dev/null| egrep -i 'cdmpv' | egrep -i VNC | grep -vi 'Terminal' | sed -r 's/\s.+//g'` \
+--wid=`DISPLAY="${HOST_DISPLAY}" WAYLAND_DISPLAY="${HOST_WAYLAND_DISPLAY}" wmctrl -l 2>/dev/null| egrep -i 'cdmpv' | egrep -i VNC | grep -vi 'Terminal' | sed -r 's/\s.+//g' | tr -d "\n"` \
 --no-input-default-bindings \
 --input-terminal \
 --no-input-cursor \

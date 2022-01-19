@@ -22,7 +22,7 @@ r_re='^[0-9]+(\.[0-9]+)?$'
 number_re='^[0-9]+$'
 res="$1"
 r="$2"
-fpslimit="${3:-60}"
+fpslimit="${3:-${r}}"
 
 if ! [[ $res =~ $res_re ]]; then
 	echo "error: Invalid resolution specified" >&2
