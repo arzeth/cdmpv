@@ -12,7 +12,7 @@ then
 	#| perl -pe 's/(ctrl\+a )no-osd set vf "format=fmt=yuv444p10:colorlevels=limited:colormatrix=auto";/$1/gi' \
 	#| perl -pe 's/format=fmt=[^:"]+(?::colorlevels=limited:colormatrix=auto)?//g' \
 	cat "$MPV__INPUT_CONF" \
-	| perl -pe 's/(ctrl\+a no-osd set vf ")format=fmt=yuv444p10:colorlevels=limited:colormatrix=auto";/$1";/gi' \
+	| perl -pe 's/(ctrl\+[ao] no-osd set vf ")format=fmt=yuv444p10:colorlevels=limited:colormatrix=auto";/$1";/gi' \
 	| grep -iv ' pause | speed |loop-file' \
 	| sed -r 's/CTRL\+//ig' \
 	> "${DIR}"/.mpv-input-DONTEDIT.conf

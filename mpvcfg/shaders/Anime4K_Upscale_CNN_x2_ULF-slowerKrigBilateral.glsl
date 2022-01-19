@@ -38,21 +38,6 @@ vec4 hook() {
 	);
 }
 
-//!HOOK MAIN
-//!BIND HOOKED
-//!SAVE LOWRES_Y
-//!COMPONENTS 1
-//!WIDTH HOOKED.w
-//!HEIGHT HOOKED.h
-vec4 hook ()
-{
-    return vec4(
-		(
-			mat3(0.2126,-0.09991,0.615,0.7152,-0.33609,-0.55861,0.0722,0.436,-0.05639)*HOOKED_tex(HOOKED_pos).rgb
-		).x,
-		0,0,0
-	);
-}
 
 
 
@@ -1722,9 +1707,9 @@ vec4 hook() {
 
 //!HOOK MAIN
 //!BIND HOOKED
+//!SAVE HIGHRES_Y
 //!WIDTH HOOKED.w
 //!HEIGHT HOOKED.h
-//!SAVE HIGHRES_Y
 //!COMPONENTS 1
 vec4 hook ()
 {
@@ -1742,7 +1727,6 @@ vec4 hook ()
 
 
 
-/*
 
 
 
@@ -1754,14 +1738,15 @@ vec4 hook ()
 
 
 
-// # HOOK MAIN
-// # BIND OLDCHROMA
-// # BIND HIGHRES_Y
-// # WIDTH HIGHRES_Y.w
-// # HEIGHT HIGHRES_Y.h
-// # SAVE LOWRES_Y
-// # COMPONENTS 2
-// # DESC KrigBilateral Downscaling Y pass 1
+
+//!HOOK MAIN
+//!BIND OLDCHROMA
+//!BIND HIGHRES_Y
+//!WIDTH OLDCHROMA.w
+//!HEIGHT OLDCHROMA.h
+//!SAVE LOWRES_Y
+//!COMPONENTS 2
+//!DESC KrigBilateral Downscaling Y pass 1
 
 #define offset      vec2(0)
 
@@ -1793,14 +1778,14 @@ vec4 hook() {
     return avg;
 }
 
-// # HOOK MAIN
-// # BIND OLDCHROMA
-// # BIND LOWRES_Y
-// # WIDTH HIGHRES_Y.w
-// # HEIGHT HIGHRES_Y.h
-// # SAVE LOWRES_Y
-// # COMPONENTS 2
-// # DESC KrigBilateral Downscaling Y pass 2
+//!HOOK MAIN
+//!BIND OLDCHROMA
+//!BIND LOWRES_Y
+//!WIDTH OLDCHROMA.w
+//!HEIGHT OLDCHROMA.h
+//!SAVE LOWRES_Y
+//!COMPONENTS 2
+//!DESC KrigBilateral Downscaling Y pass 2
 
 #define offset      vec2(0)
 
@@ -1841,7 +1826,7 @@ vec4 hook() {
 
 
 
-*/
+
 
 
 // KrigBilateral by Shiandow
@@ -1864,10 +1849,10 @@ vec4 hook() {
 //!HOOK MAIN
 //!BIND OLDCHROMA
 //!BIND HIGHRES_Y
-//!BIND MAIN
+//!BIND HOOKED
 //!BIND LOWRES_Y
-//!WIDTH MAIN.w
-//!HEIGHT MAIN.h
+//!WIDTH HOOKED.w
+//!HEIGHT HOOKED.h
 //!OFFSET ALIGN
 //!SAVE MAIN
 //!DESC KrigBilateral Upscaling UV
@@ -1985,10 +1970,9 @@ vec4 hook() {
     interp += b[0] * (X[0] - X[N]).zw;
 
     //return interp.xyxy;
-    vec4 old = MAIN_tex(MAIN_pos);
+    vec4 old = HOOKED_tex(HOOKED_pos);
     vec3 oldAsYUV = mat3(0.2126,-0.09991,0.615,0.7152,-0.33609,-0.55861,0.0722,0.436,-0.05639)*old.rgb;
-    // FIXME: !!!
-    //oldAsYUV.y = interp.x;
+    oldAsYUV.y = interp.x;
     oldAsYUV.z = interp.y;
     return vec4(mat3(1,1,1,0,-0.21482,2.12798,1.28033,-0.38059,0) * oldAsYUV.xyz, old.a);
 }

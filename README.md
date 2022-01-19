@@ -195,25 +195,25 @@ So when you need the bottom part (e.g. to save the game; the Log button),
 
 ## MPV's hotkeys (read it!!!)
 I am probably the only one in the world that benchmarked all possible shaders chains
-<br/>(I blacklisted some of patterns, so that it would not take years)
+<br/>(I blacklisted some of low-quality patterns, so that it would not take years)
 <br/>on 2 images and 2 resolutions (800x450→1920x1080, 1280x720→1920x1080),
 <br/>I'll publish my script and results in .json later,
-<br/>my script primarily uses ssim (https://github.com/Alexkral/AviSynthAiUpscale/issues/3, code by igv),
+<br/>my benchmark script primarily uses ssim (https://github.com/Alexkral/AviSynthAiUpscale/issues/3, code by igv),
 <br/>but also dssim (AUR: dssim-git).
 <br/>
 <br/>Most shader chains that are in `input.conf` are optimized for 1920x1080 (or probably 2560x1440) screen because my monitor is 1920x1080.
-<br/>All shaders upscale images 2x times (1280x720→2560x1440) except when it is explicitly written 3x or 4x in the file name.
-<br/>So they need to be downscaled afterwards if the result is higher than your screen resolution.
-<br/>Only MPV's built-in upscalers (`scale=` in `mpv.conf`) can upscale to any arbitrary resolution (1.223x, etc.)
+<br/>All shaders upscale images 2x times (1280x720→2560x1440) except when it is explicitly written 3x or 4x in their file name.
+<br/>So their results need to be downscaled afterwards at the final stage if the result has higher resolution than your screen's.
+<br/>Only SSimSuperRes (by igv) and MPV's built-in upscalers (`scale=` in `mpv.conf`) can upscale to any arbitrary resolution (1.223x, etc.).
 <br/>If the upscaled result image is the same size as your screen, then the sharpener is needed (`~~/shaders/igv/SSimDownscaler.glsl`) or Light_Soft shader `~~/shaders/Anime4K_Restore_CNN_Light_Soft_VL-YYY-half.glsl` (or not -half), test yourself. Sometimes they are already included (especially in case of Anime4K *CNN* Upscalers that produces lines that are thicker than needed).
-<br/>So if you have 4k/5k display, then add either Anime4K -UL or -UL-YYY or -L variant or ~~/shaders/superxbr.glsl (it's like lanczos but lines are much smoother) at the end of string in `input.conf` if your GPU allows it.
+<br/>So if you have 4k/5k display, then add additional Anime4K -UL or -UL-YYY or -L variant or ~~/shaders/superxbr.glsl (it's like lanczos but lines are much smoother) at the end of string in `input.conf` if your GPU allows it and it isn't there already.
 <br/>
-<br/>If you are at the same tab where you launched `cdmpv.sh`,
-<br/>then that means if you press any key it will be sent to MPV (because cdmpv.sh launches cdmpvTempBgTasks.sh in bg which launches x11wid.sh in bg).
+<br/>If you are at the same terminal's tab where you launched `cdmpv.sh`,
+<br/>then that means you can control MPV with your keyboard (because cdmpv.sh launches cdmpvTempBgTasks.sh in bg which launches x11wid.sh in bg).
 <br/>Or you can `killall mpv`, create a new tab in host X11/Wayland and `./x11wid.sh`.
 <br/>
 <br/>Every hotkey in `input.conf` cycles through 1-5 shaders.
-<br/>If it is written "press `2` three times", but you accidentally press it four times, press `0`, then repeat what you wanted.
+<br/>If it is written "press `2` three times", but you accidentally press it four times, press `0` (uses either SSimSuperRes or SSimDownscaler) or `shift+0` (uses nothing), then repeat what you wanted.
 <br/>
 <br/>When you switch a shader chain, you'll see a message in the MPV's log (it is written to stdout, it is not written to a file).
 <br/>To switch a shader chain, you should press a key, *then wait while it renders a new frame with it* (up to 2 seconds unless they aren't in your shader cache because you never used them),
@@ -231,12 +231,30 @@ I am probably the only one in the world that benchmarked all possible shaders ch
 2x upscaling (e.g. 1280x720→2560x1440) and very high FPS, smooth lines, no ringing. Disadvantages: blurred BG, very similar colors are blended, no small details (e.g. grain disappears from hair in Daitoshokan no Hitsujikai); lines are thicker (than the original) without Anime4K_Restore.
 The hotkey: press one time <code>a</code>.
 ```
-~~/shaders/Anime4K_Clamp_Highlights.glsl:~~/shaders/Anime4K_Upscale_CNN_x2_ULF-KrigBilateral.glsl:~~/shaders/Anime4K_Restore_CNN_Light_S-YYY-half.glsll
+~~/shaders/Anime4K_Clamp_Highlights.glsl:~~/shaders/Anime4K_Upscale_CNN_x2_ULF-KrigBilateral.glsl:~~/shaders/Anime4K_Restore_CNN_Light_S-YYY-half.glsl:~~/shaders/igv/SSimSuperRes.glsl
 ```
+
+For (<code>a</code> + 1% better colors) use <code>o</code>.
+
+The faster shader chain is <code>o+o</code> (the only one here with color distortions):
+```
+~~/shaders/Anime4K_Clamp_Highlights.glsl:~~/shaders/Anime4K_Upscale_CNN_x2_ULF.glsl:~~/shaders/igv/SSimSuperRes.glsl
+```
+
+The fastest shader chain is <code>0</code> which is just:
+```
+~~/shaders/igv/SSimSuperRes.glsl
+```
+
+BTW, SSimSuperRes gets used only when previous upscalers didn't upscale the image big enough.
+
+No shader chain is <code>shift+0</code> (MPV's built-in lanczos shader will be used for upscaling).
+
+
 
 Press one time <code>e</code> if you want the same as <code>a</code>, but 4x upscaling.
 ```
-~~/shaders/igv/KrigBilateral.glsl:~~/shaders/Anime4K_Clamp_Highlights-LUMA-first-init.glsl:~~/shaders/Anime4K_Upscale_CNN_x2_UL-LUMA.glsl:~~/shaders/Anime4K_Clamp_Highlights-LUMA-apply.glsl:~~/shaders/Anime4K_Restore_CNN_Light_Soft_S.glsl:~~/shaders/Anime4K_Upscale_CNN_x2_M.glsl
+~~/shaders/igv/KrigBilateral.glsl:~~/shaders/Anime4K_Clamp_Highlights-LUMA-first-init.glsl:~~/shaders/Anime4K_Upscale_CNN_x2_UL-LUMA.glsl:~~/shaders/Anime4K_Clamp_Highlights-LUMA-apply.glsl:~~/shaders/Anime4K_Restore_CNN_Light_Soft_S.glsl:~~/shaders/Anime4K_Upscale_CNN_x2_M.glsl:~~/shaders/igv/SSimSuperRes.glsl
 ```
 
 <code>e</code>+<code>e</code> is better than <code>e</code> but slower.
@@ -250,14 +268,14 @@ Press one time <code>e</code> if you want the same as <code>a</code>, but 4x ups
 <br/>
 <br/>Press one time <code>2</code> if you play Vampire's Melody (original is 1920x1080) because the animated sprite seems to be a lossy video (I also tried downscaling before upscaling but the result is worse).
 ```
-~~/shaders/Anime4K_Restore_CNN_Light_Soft_VL-YYY.glsl
+~~/shaders/Anime4K_Restore_CNN_Light_Soft_VL-YYY.glsl:~~/shaders/igv/SSimSuperRes.glsl
 ```
 <br/>
 <br/>Press two times <code>2</code> if you play the 1920x1080 game at 1920x1080 screen, and when a character's face is near, you see sprites are low-resolution,
 in this case you need this:
 
 ```
-~~/shaders/Anime4K_Restore_CNN_Light_Soft_VL-YYY-half.glsl
+~~/shaders/Anime4K_Restore_CNN_Light_Soft_VL-YYY-half.glsl:~~/shaders/igv/SSimSuperRes.glsl
 ```
 
 or in some cases just <code>./cdmpv 1280x720 60 60</code> for this game, although somes VNs use very bad cheap downscaling when the output resolution is lower than original (Kinkoi on Unity, at least the early version)... or less likely it's a bug in Wine.
@@ -265,7 +283,7 @@ or in some cases just <code>./cdmpv 1280x720 60 60</code> for this game, althoug
 <br/>Press three times <code>2</code> if you play Monkey!¡ because the original has mega aliasing.
 
 ```
-~~/shaders/Anime4K_Restore_CNN_Moderate_Soft_VL-YYY.glsl
+~~/shaders/Anime4K_Restore_CNN_Moderate_Soft_VL-YYY.glsl:~~/shaders/igv/SSimSuperRes.glsl
 ```
 
 <br/>For Wanko to Kurasou (800x600->4K) press three or four times <code>shift+q</code> (depending on FPS and tastes).
@@ -280,12 +298,12 @@ Press
 <br/>
 <br/>Press one time <code>shift+q</code> (good for 800x600 → 1920x/2560x; the best for Sugar * Style 1280x720→1920x1080)
 ```
-~~/shaders/Anime4K_Clamp_Highlights-LUMA-first-init.glsl:~~/shaders/Anime4K_Upscale_GAN_x3_VL-LUMA.glsl:~~/shaders/Anime4K_Clamp_Highlights-LUMA-apply.glsl:~~/shaders/igv/KrigBilateral.glsl
+~~/shaders/igv/KrigBilateral.glsl:~~/shaders/Anime4K_Clamp_Highlights-LUMA-first-init.glsl:~~/shaders/Anime4K_Upscale_GAN_x3_VL-LUMA.glsl:~~/shaders/Anime4K_Clamp_Highlights-LUMA-apply.glsl:~~/shaders/igv/SSimSuperRes.glsl
 ```
 
 Sometimes `w` is the best (e.g. Koikari Love for Hire), but sometimes it has ringing especially in fonts.
 ```
-~~/shaders/igv/KrigBilateral.glsl::~~/shaders/avisynth/mpv user shaders/LineArt/3x/AiUpscale_HQ_3x_LineArtFCla.glsl:~~/shaders/Anime4K_Restore_CNN_Light_VL-YYY.glsl
+~~/shaders/igv/KrigBilateral.glsl::~~/shaders/avisynth/mpv user shaders/LineArt/3x/AiUpscale_HQ_3x_LineArtFCla.glsl:~~/shaders/Anime4K_Restore_CNN_Light_VL-YYY.glsl:~~/shaders/igv/SSimSuperRes.glsl
 ```
 Or rarely `n` is better (same as `w` but without Restore). The `Restore` shaders fix some ringing for AiUpscale.
 <br/>Also lines are aliased (in other words, ladder) for some VNs with AiUpscale, which doesn't show up on SSIM test, but we humans see it.
@@ -316,10 +334,11 @@ Anime4K_Clamp_Highlights-LUMA-first-init.glsl
 ```
 
 
-Because everything was a little more red (unless -L variant is used), I created
+Because with Anime4K_Upscale_CNN_x2_* everything was a little (e.g. Red 40/255 → 54/255) more red (unless `Anime4K_Upscale_CNN_x2_L` is used), I created
 <br/>Anime4K_Upscale_CNN_x2_ULF-KrigBilateral.glsl
 <br/>Although the input is still RGB, only Y channel and U channel are upscaled by Anime4K, while V is upscaled by KrigBilateral embedded in the same file.
 <br/>The disadvantage (compared to the original shader) is thin pink lines are darker.
+<br/><code>+o</code> uses the 3% slower <code>Anime4K_Upscale_CNN_x2_ULF-slowerKrigBilateral.glsl</code> that doesn't have that disadvantage (KrigBilaterial is used for both U and V channels here).
 <br/>It requires a little more VRAM (to store both the upscaled image and also the original image).
 <br/>V channel only is because there's something wrong with upscaling U channel. FIXME!
 
