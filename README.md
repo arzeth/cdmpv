@@ -236,7 +236,15 @@ The hotkey: press one time <code>a</code>.
 
 For (<code>a</code> + 1% better colors) use <code>o</code>.
 
-The faster shader chain is <code>o+o</code> (the only one here with color distortions):
+The faster shader chain is <code>o+o</code>
+```
+~~/shaders/Anime4K_Clamp_Highlights.glsl:~~/shaders/Anime4K_Upscale_CNN_x2_ULF-KrigBilateral.glsl:~~/shaders/igv/SSimSuperRes.glsl
+```
+It is used by default when
+<br/>input resolution is > 1579 but (output resolution / input resolution) ≤ 1.23.
+<br/>E.g. for 1600x900 → 1920x1080.
+
+The even faster shader chain is <code>o+o+o</code> (the only one here with color distortions):
 ```
 ~~/shaders/Anime4K_Clamp_Highlights.glsl:~~/shaders/Anime4K_Upscale_CNN_x2_ULF.glsl:~~/shaders/igv/SSimSuperRes.glsl
 ```
