@@ -30,13 +30,19 @@ then
 
 	if [[ "${__GLX_VENDOR_LIBRARY_NAME}" == "nvidia" ]]
 	then
-		echo "You already have environment variable __GLX_VENDOR_LIBRARY_NAME=nvidia, don't forget"
-		export isNvidia=1
+		if [[ ! ${HOST_W:+1} ]] # sometimes this file is included by a file which already included vars.sh
+		then
+			echo
+			echo
+			echo "You already have environment variable __GLX_VENDOR_LIBRARY_NAME=nvidia, don't forget"
+			echo
+			export isNvidia=1
+		fi
 	else
 		if [[ ! ${__GLX_VENDOR_LIBRARY_NAME:+1} ]]
 		then
 			(nvidia-smi | grep '[MG]iB')>/dev/null 2>/dev/null && \
-			echo 'Setting env var __GLX_VENDOR_LIBRARY_NAME to `nvidia` instead of default `mesa` because it seems you use an NVIDIA GPU' && \
+			echo 'Setting env var __GLX_VENDOR_LIBRARY_NAME to `nvidia` instead of default `mesa` because it seems you use an NVIDIA GPU' && echo && \
 			export __GLX_VENDOR_LIBRARY_NAME=nvidia && \
 			export isNvidia=1
 			#&& export __NV_PRIME_RENDER_OFFLOAD=1 && \
