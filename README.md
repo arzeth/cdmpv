@@ -10,7 +10,7 @@ Image quality is much better than Magpie.
 <br/>Therefore, it's recommended to play VNs with `cdmpv`.
 <br/>
 <br/>I developed `cdmpv` because [Magpie](https://github.com/Blinue/Magpie) doesn't work on Wine and I really wanted my waifus (lol) from VNs to be more beautiful as soon as possible on Linux.
-<br/>(Although after 150 hours that I spent on `cdmpv` I want now everything to be beautiful in VNs, even background images.).
+<br/>(Although after 100 hours that I spent on `cdmpv` I want now everything to be beautiful in VNs, even background images.).
 <br/>
 <br/>And since I want more FPS,
 <br/>and play without a nested display server,
