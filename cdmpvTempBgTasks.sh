@@ -37,8 +37,11 @@ function fixRes {
 
 	# else:
 	# Check if we already have the requested resolution at the requested refresh rate
-	(xrandr | grep "${GUEST_RES}"'(\s+[0-9.]{4,6}\*?\+?)*\s+'"${GUEST_FPS}" >/dev/null) || (xrandr --newmode $modeline && xrandr --addmode VNC-0 "${XRANDR_RES}")
-	xrandr -s "${XRANDR_RES}" -r $GUEST_FPS
+	if [[ "$GUEST_FPS" != "60" ]]
+	then
+		(xrandr | grep "${GUEST_RES}"'(\s+[0-9.]{4,6}\*?\+?)*\s+'"${GUEST_FPS}" >/dev/null) || (xrandr --newmode $modeline && xrandr --addmode VNC-0 "${XRANDR_RES}")
+		xrandr -s "${XRANDR_RES}" -r $GUEST_FPS
+	fi
 	xrandr --dpi 96
 }
 fixRes

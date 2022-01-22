@@ -413,10 +413,16 @@ or
 __GLX_VENDOR_LIBRARY_NAME=mesa LIBGL_ALWAYS_SOFTWARE=1 VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/lvp_icd.x86_64.json  MESA_LOADER_DRIVER_OVERRIDE=zink
 ```
 <br/>
-<br/>BTW, when using NVIDIA GPU (I don't know about other GPUs) inside *nested* X11 there is a problem with <code>glxinfo</code> and videos in some VNs:
-<br/>E.g. Akeiro Kaikitan as soon as it tries to play a video, the wine process finishes with X11 error.
+<br/>BTW, when using NVIDIA GPU (I don't know about other GPUs) inside *nested* X11 there is a problem with <code>glxinfo</code> (fails to start every 5th time) and videos (they either always fail or never) in some VNs:
+<br/>E.g. Akeiro Kaikitan as soon as it tries to play a video, the wine process finishes with X11 error (`BadAlloc (insufficient resources for operation)`, opcodes: `150 (GLX), 5 (X_GLXMakeCurrent), 0, 42`)
 <br/>Also I found out that Akeiro Kaikitan saves the read messages only after manually exiting the whole game, not when returning to main menu.
-<br/>Offending videos are open in a new window. Maybe it tries to create a too large window?
+<br/>
+<br/>The workaround is the same as above, i.e. using software rendering, but dgVoodoo2 is not necessary.
+<br/>Also you can use that env variable for the entire X11:
+```
+__GLX_VENDOR_LIBRARY_NAME=mesa ./cdmpv.sh 1280x720 60 25
+```
+
 <br/>
 
 Uninstall DXVK:
