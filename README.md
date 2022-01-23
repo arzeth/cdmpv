@@ -417,7 +417,8 @@ __GLX_VENDOR_LIBRARY_NAME=mesa LIBGL_ALWAYS_SOFTWARE=1 VK_ICD_FILENAMES=/usr/sha
 <br/>E.g. Akeiro Kaikitan as soon as it tries to play a video, the wine process finishes with X11 error (`BadAlloc (insufficient resources for operation)`, opcodes: `150 (GLX), 5 (X_GLXMakeCurrent), 0, 42`)
 <br/>Also I found out that Akeiro Kaikitan saves the read messages only after manually exiting the whole game, not when returning to main menu.
 <br/>
-<br/>The workaround is the same as above, i.e. using software rendering, but dgVoodoo2 is not necessary.
+<br/>The workaround is the same as above but probably only __GLX_VENDOR_LIBRARY_NAME=mesa is enough, i.e. using software rendering, but dgVoodoo2 is not necessary.
+<br/><code>__GLX_VENDOR_LIBRARY_NAME=mesa</code> applies only to OpenGL; so if you see the DXVK log, then your GPU is used.
 <br/>Also you can use that env variable for the entire X11:
 ```
 __GLX_VENDOR_LIBRARY_NAME=mesa ./cdmpv.sh 1280x720 60 25
