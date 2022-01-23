@@ -362,9 +362,9 @@ AiUpscale_HQ_4x_LineArt is worse than _3x, at least for 2D,
 <br/>althought a few details are better, so I didn't include int
 
 ## Screenshots
-`DISPLAY=:99 scrot` to save original unupscaled image as .png.
-<br/>Press `s` to save *un*upscaled image as .png to `/tmp/`
-<br/>Press `shift+s` to save upscaled image as .png to `/tmp/`
+`DISPLAY=:44 scrot` to save original unupscaled image as .png.
+<br/>Press `s` in MPV's CLI to save *un*upscaled image as .png to `/tmp/`
+<br/>Press `shift+s` in MPV's CLI to save upscaled image as .png to `/tmp/`
 
 
 ## About shaders

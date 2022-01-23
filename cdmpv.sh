@@ -360,7 +360,6 @@ DONTPAINT=1
 	xdamageoptname="+extension"
 #fi
 set -x
-#x0vncserver \
 DONTPAINT="${DONTPAINT}" Xvnc \
 \
 +iglx \
