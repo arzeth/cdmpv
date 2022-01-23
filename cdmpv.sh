@@ -243,7 +243,7 @@ fi
 # User should provide their own HOST_RES only if they want a particular monitor
 
 
-export DISPLAY=:99
+export DISPLAY="${GUEST_DISPLAY}"
 unset WAYLAND_DISPLAY
 
 
@@ -361,7 +361,7 @@ DONTPAINT=1
 #fi
 set -x
 #x0vncserver \
-DONTPAINT=${DONTPAINT} Xvnc \
+DONTPAINT="${DONTPAINT}" Xvnc \
 \
 +iglx \
 -dpi 96 \
@@ -376,14 +376,16 @@ DONTPAINT=${DONTPAINT} Xvnc \
 -UseBlacklist=0 \
 -UseIPv6=0 \
 \
--AcceptCutText=$ALLOW_COPYOUTOF \
--SendCutText=$ALLOW_COPYINTO \
+-AcceptCutText="$ALLOW_COPYOUTOF" \
+-SendCutText="$ALLOW_COPYINTO" \
 -SendPrimary=0 \
 -SetPrimary=0 \
 -RawKeyboard=1 \
 \
--geometry ${GUEST_RES} \
--rfbport 5900 \
+-geometry "${GUEST_RES}" \
+-rfbport "${VNC_PORT}" \
+-rfbunixpath "${VNC_SOCKET_PATH}" \
+-rfbunixmode "${VNC_SOCKET_PERMS}" \
 -SecurityTypes None \
 \
 -nocursor \
@@ -391,8 +393,8 @@ DONTPAINT=${DONTPAINT} Xvnc \
 -depth 24 \
 -pixelformat RGB888 \
 +extension Composite \
-${xdamageoptname} Damage \
-+extension Xfixes ${DISPLAY}
+"${xdamageoptname}" Damage \
++extension Xfixes "${DISPLAY}"
 
 
 # x0vncserver specific;

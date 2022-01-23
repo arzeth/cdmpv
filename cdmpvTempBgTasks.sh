@@ -191,7 +191,7 @@ then
 else
 	set -x
 	DISPLAY="${HOST_DISPLAY}" WAYLAND_DISPLAY="${HOST_WAYLAND_DISPLAY}" \
-		vncviewer :0 -PreferredEncoding=Raw -CompressLevel=0 -NoJpeg=1 -MenuKey=F11 -AcceptClipboard=$ALLOW_COPYOUTOF -SendClipboard=$ALLOW_COPYINTO &
+		vncviewer "${VNC_SOCKET_PATH}" -PreferredEncoding=Raw -CompressLevel=0 -NoJpeg=1 -MenuKey=F11 -AcceptClipboard="$ALLOW_COPYOUTOF" -SendClipboard="$ALLOW_COPYINTO" &
 	sleep 3
 	GUEST_DISPLAY="${DISPLAY}" DISPLAY="${HOST_DISPLAY}" WAYLAND_DISPLAY="${HOST_WAYLAND_DISPLAY}" bash "${DIR}"/x11wid.sh &
 	set +x
