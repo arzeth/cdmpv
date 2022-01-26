@@ -44,6 +44,12 @@ X11=xorg. It is a display server. The other one in Wayland.
 <br/>[i3](https://github.com/i3/i3) as a WM in nested X11.
 <br/>[FFmpeg](https://github.com/FFmpeg/FFmpeg) for capturing what's inside nested X11.
 
+## Don't forget to calibrate your monitor
+http://www.lagom.nl/lcd-test/contrast.php
+<br/>http://www.lagom.nl/lcd-test/black.php
+<br/>http://www.lagom.nl/lcd-test/white.php
+<br/>And especially sharpness (make sure that browser zoom is 100%): http://www.lagom.nl/lcd-test/sharpness.php
+
 ## How to use:
 Go to vndb.org, see the resolution of a screenshot of the game (e.g. [The Fruit of Grisaia](https://vndb.org/v5154) uses [1024x576](https://s2.vndb.org/sf/26/127126.jpg)).
 ```
@@ -61,8 +67,10 @@ Go to vndb.org, see the resolution of a screenshot of the game (e.g. [The Fruit 
 
 
 ```
-
-If the VNC viewer has fully grabbed your input, then press F11 to show the context menu, then disable "Full screen".
+If you accidentally specify even 1px more, the upscaled result is far worse. If you specify 30px more than needed, then almost nothing will be upscaled because neural networks are not trained to upscale already upscaled images.
+<br/>Inside nested X11, play games in fullscreen. The VNC Viewer itself could be even a window.
+<br/>
+<br/>If the VNC viewer has fully grabbed your input, then press F11 to show the context menu, then disable "Full screen".
 <br/>`GUEST_REFRESH_RATE` is the guest X11's virtual (fake) display's refresh rate. Rarely gameplay in VNs is broken or becomes too fast when >60 Hz.
 <br/>default `GUEST_REFRESH_RATE` is 60
 <br/>default `UPSCALED_FPS` is 30
@@ -340,10 +348,9 @@ Anime4K_Clamp_Highlights-LUMA-first-init.glsl
 Because with Anime4K_Upscale_CNN_x2_* everything was a little (e.g. Red 40/255 → 54/255) more red (unless `Anime4K_Upscale_CNN_x2_L` is used), I created
 <br/>Anime4K_Upscale_CNN_x2_ULF-KrigBilateral.glsl
 <br/>Although the input is still RGB, only Y channel and U channel are upscaled by Anime4K, while V is upscaled by KrigBilateral embedded in the same file.
-<br/>The disadvantage (compared to the original shader) is thin pink lines are darker.
-<br/><code>+o</code> uses the 3% slower <code>Anime4K_Upscale_CNN_x2_ULF-slowerKrigBilateral.glsl</code> that doesn't have that disadvantage (KrigBilaterial is used for both U and V channels here).
 <br/>It requires a little more VRAM (to store both the upscaled image and also the original image).
 <br/>V channel only is because there's something wrong with upscaling U channel. FIXME!
+<br/><code>+o</code> uses the 3% slower <code>Anime4K_Upscale_CNN_x2_ULF-slowerKrigBilateral.glsl</code> that has 0.1% better colors (KrigBilaterial is used for both U and V channels here).
 
 
 If a shader file has `F` at the end, then that means that this shader will be *f*orcefully (no `//!WHEN`) used even the input resolution is bigger than display resolution.
