@@ -39,6 +39,20 @@ then
 	GUEST_DISPLAY=":${GUEST_DISPLAY}"
 fi
 
+if [[ "$MP" == "" ]]
+then
+	MP=2
+elif [[ ! "$MP" =~ $int_re ]]
+then
+	>&2 echo 'config.sh: $MP must be an integer. Exiting.'
+	exit 1
+elif (( MP < 0 || MP > 8 ))
+then
+	>&2 echo 'config.sh: $MP must be [0..8]. Exiting.'
+	exit 1
+fi
+
+
 #float_re='^[0-9]+(?:\.(?:[0-9]+)?)?$'
 float_re='^[0-9]+$|^[0-9]+\.$|^[0-9]+\.[0-9]+$'
 if [[ "$FORCE_RERENDER_EVERY" == "" ]]

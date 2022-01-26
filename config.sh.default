@@ -10,6 +10,7 @@ fi
 ALLOW_COPYINTO=
 ALLOW_COPYOUTOF=1
 PREFER_AUTOCUTSEL=1
+# This variable is deprecated:
 AUTOSWITCH=1
 # if $VNC_PORT > 0, then TCP connection is allowed
 VNC_PORT=-1
@@ -25,6 +26,9 @@ FORCE_RERENDER_EVERY=1.0
 MPV__CONFIG_DIR="$DIR/mpvcfg"
 MPV__INPUT_CONF="$DIR/mpvcfg/input.conf"
 MPV__SHADER_CACHE="$HOME/.config/mpv/shader_cache"
+# Remove similar frames. 0=don't remove.
+# Max MP is 8. Default is global env $MP else 2.
+MP="${MP:-2}"
 
 
 # Deprecated vars:

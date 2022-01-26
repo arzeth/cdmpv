@@ -49,9 +49,6 @@ fi
 
 #-vf mpdecimate,scale=w=640:h=480:flags=lanczos \
 
-if [[ "$MP" == "" ]]; then
-	MP=2
-fi
 if [[ "$MP" == "1" ]]; then
 	AAA="hi=$((64*1)):lo=$((64*1)):frac=0.1"
 elif [[ "$MP" == "2" ]]; then
