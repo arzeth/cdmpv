@@ -20,27 +20,27 @@ sleep 2 # todo: do we need this line?
 
 # cvt is better than gtf according to what I read;
 # But gtf is better for virtual monitors because cvt outputs 59.86 Hz when asked for 60.00 Hz
-modeline=`gtf ${GUEST_W} ${GUEST_H} ${GUEST_FPS} | grep Modeline | sed -r 's/^\s+//' |cut -d' ' -f2- | tr '"' ' '`
+modeline=`gtf ${GUEST_W} ${GUEST_H} ${GUEST_REFRESH_RATE} | grep Modeline | sed -r 's/^\s+//' |cut -d' ' -f2- | tr '"' ' '`
 echo $modeline > /tmp/vncmodeline
 XRANDR_RES=`echo -n ${modeline} | cut -d' ' -f1`
 #XRANDR_RES=1280x720
 
 
-# TODO: rg --pcre2 ..... ${GUEST_FPS}(?![0-9]) but Debian&Ubuntu's ripgrep is compiled without pcre2
+# TODO: rg --pcre2 ..... ${GUEST_REFRESH_RATE}(?![0-9]) but Debian&Ubuntu's ripgrep is compiled without pcre2
 
 # Fix resolution in the guest
 function fixRes {
 	# if the guest is Sway:
-	#swaymsg output <name> --custom "${GUEST_W}x${GUEST_H}@${GUEST_FPS}Hz"
+	#swaymsg output <name> --custom "${GUEST_W}x${GUEST_H}@${GUEST_REFRESH_RATE}Hz"
 	# Do we need to this?:
 	#swaymsg output <name> subpixel rgb|bgr|vrgb|vbgr|none
 
 	# else:
 	# Check if we already have the requested resolution at the requested refresh rate
-	if [[ "$GUEST_FPS" != "60" ]]
+	if [[ "$GUEST_REFRESH_RATE" != "60" ]]
 	then
-		(xrandr | grep "${GUEST_RES}"'(\s+[0-9.]{4,6}\*?\+?)*\s+'"${GUEST_FPS}" >/dev/null) || (xrandr --newmode $modeline && xrandr --addmode VNC-0 "${XRANDR_RES}")
-		xrandr -s "${XRANDR_RES}" -r $GUEST_FPS
+		(xrandr | grep "${GUEST_RES}"'(\s+[0-9.]{4,6}\*?\+?)*\s+'"${GUEST_REFRESH_RATE}" >/dev/null) || (xrandr --newmode $modeline && xrandr --addmode VNC-0 "${XRANDR_RES}")
+		xrandr -s "${XRANDR_RES}" -r $GUEST_REFRESH_RATE
 	fi
 	xrandr --dpi 96
 }
@@ -90,8 +90,8 @@ echo HOST_DISPLAY=\"${HOST_DISPLAY}\" >> "${DIR}/.env-of-current-process"
 echo GUEST_DISPLAY=\"${DISPLAY}\" >> "${DIR}/.env-of-current-process"
 echo WAYLAND_DISPLAY=\"${HOST_WAYLAND_DISPLAY}\" >> "${DIR}/.env-of-current-process"
 echo GUEST_RES=\"${GUEST_RES}\" >> "${DIR}/.env-of-current-process"
-echo GUEST_FPS=\"${GUEST_FPS}\" >> "${DIR}/.env-of-current-process"
-echo RMPV=\"${RMPV}\" >> "${DIR}/.env-of-current-process"
+echo GUEST_REFRESH_RATE=\"${GUEST_REFRESH_RATE}\" >> "${DIR}/.env-of-current-process"
+echo UPSCALED_FPS=\"${UPSCALED_FPS}\" >> "${DIR}/.env-of-current-process"
 
 if [[ "${STUPIDI3ONLYMETHOD}" == "1" ]]
 then
@@ -117,15 +117,15 @@ then
 --demuxer-rawvideo-h="${GUEST_H}" \
 --demuxer-rawvideo-format=BGR3 \
 --demuxer-rawvideo-mp-format=bgr24 \
---demuxer-rawvideo-fps="${GUEST_FPS}" \
+--demuxer-rawvideo-fps="${GUEST_REFRESH_RATE}" \
 --geometry="${VNCVIEWER_AND_MPV_RES}+${VNCVIEWER_AND_MPV_POS_X}+${VNCVIEWER_AND_MPV_POS_Y}" \
 \
 --input-conf="${MPV__INPUT_CONF}" \
 --af="" \
 --untimed \
 --vf-pre="mpdecimate" \
---vf-pre="fps=${RMPV}" \
---fps="${RMPV}" \
+--vf-pre="fps=${UPSCALED_FPS}" \
+--fps="${UPSCALED_FPS}" \
 --input-ipc-server="${DIR}"/mpvsocket \
 --correct-pts \
 --vd-lavc-threads=1 \

@@ -1876,6 +1876,9 @@ vec4 hook() {
 #define I9(f, n)    I3(f, n) I3(f, n+3) I3(f, n+6)
 
 vec4 hook() {
+    vec4 old = MAIN_tex(MAIN_pos);
+    if (old.r < 0.005/* && old.g < 0.02 && old.b < 0.02*/) return old; // not damaged ⇒ don't fix
+    if (old.r > 0.98 && old.g > 0.98 && old.b > 0.98) return old; // not damaged ⇒ don't fix
     vec2 pos = OLDCHROMA_pos * OLDCHROMA_size - vec2(0.5);
     vec2 offset = pos - round(pos);
     pos -= offset;
@@ -1970,7 +1973,6 @@ vec4 hook() {
     interp += b[0] * (X[0] - X[N]).zw;
 
     //return interp.xyxy;
-    vec4 old = HOOKED_tex(HOOKED_pos);
     vec3 oldAsYUV = mat3(0.2126,-0.09991,0.615,0.7152,-0.33609,-0.55861,0.0722,0.436,-0.05639)*old.rgb;
     oldAsYUV.y = interp.x;
     oldAsYUV.z = interp.y;

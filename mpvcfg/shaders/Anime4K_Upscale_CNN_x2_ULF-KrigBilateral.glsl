@@ -1891,6 +1891,25 @@ vec4 hook() {
 #define I9(f, n)    I3(f, n) I3(f, n+3) I3(f, n+6)
 
 vec4 hook() {
+    vec4 old = MAIN_tex(MAIN_pos);
+    if (old.r < 0.005/* && old.g < 0.02 && old.b < 0.02*/) return old; // not damaged ⇒ don't fix
+    if (old.r > 0.98 && old.g > 0.98 && old.b > 0.98) return old; // not damaged ⇒ don't fix
+    if ( // don't fix the pink color
+        old.g < old.r * 0.7
+        &&
+        old.g < old.b * 0.7
+        &&
+        old.b * 0.97 < old.r && old.r < old.b * 1.43
+    ) return old;
+    /*float sumrgbX3 = (old.r + old.g + old.b) / 3;
+    //if (sumrgb / 3 >= sumrgb * 0.97 && sumrgb / 3 <= sumrgb * 1.03) return old;
+    if ( // microoptimization
+         old.r * 0.97 < sumrgbX3 && sumrgbX3 < old.r * 1.03
+&&
+         old.g * 0.97 < sumrgbX3 && sumrgbX3 < old.g * 1.03
+&&
+         old.b * 0.97 < sumrgbX3 && sumrgbX3 < old.b * 1.03
+    ) return old;*/
     vec2 pos = OLDCHROMA_pos * OLDCHROMA_size - vec2(0.5);
     vec2 offset = pos - round(pos);
     pos -= offset;
@@ -1985,7 +2004,6 @@ vec4 hook() {
     interp += b[0] * (X[0] - X[N]).zw;
 
     //return interp.xyxy;
-    vec4 old = MAIN_tex(MAIN_pos);
     vec3 oldAsYUV = mat3(0.2126,-0.09991,0.615,0.7152,-0.33609,-0.55861,0.0722,0.436,-0.05639)*old.rgb;
     // FIXME: !!!
     //oldAsYUV.y = interp.x;

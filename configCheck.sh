@@ -30,14 +30,29 @@ then
 	VNC_SOCKET_PATH="${DIR}/vncsocket"
 fi
 
-num_re='^[0-9]+$'
+int_re='^[0-9]+$'
 if [[ "$GUEST_DISPLAY" == "" ]]
 then
 	GUEST_DISPLAY=":44"
-elif [[ $GUEST_DISPLAY =~ $num_re ]]
+elif [[ "$GUEST_DISPLAY" =~ $int_re ]]
 then
 	GUEST_DISPLAY=":${GUEST_DISPLAY}"
 fi
-unset num_re
+
+#float_re='^[0-9]+(?:\.(?:[0-9]+)?)?$'
+float_re='^[0-9]+$|^[0-9]+\.$|^[0-9]+\.[0-9]+$'
+if [[ "$FORCE_RERENDER_EVERY" == "" ]]
+then
+	FORCE_RERENDER_EVERY=1.0
+elif ! [[ "$FORCE_RERENDER_EVERY" =~ $float_re ]]
+then
+	>&2 echo 'FORCE_RERENDER_EVERY must be a float number in config.sh'
+	exit 1
+fi
+
+unset int_re
+unset float_re
+
+
 
 mkdir -p "$MPV__SHADER_CACHE"

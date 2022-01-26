@@ -45,40 +45,40 @@ X11=xorg. It is a display server. The other one in Wayland.
 <br/>[FFmpeg](https://github.com/FFmpeg/FFmpeg) for capturing what's inside nested X11.
 
 ## How to use:
+Go to vndb.org, see the resolution of a screenshot of the game (e.g. [The Fruit of Grisaia](https://vndb.org/v5154) uses [1024x576](https://s2.vndb.org/sf/26/127126.jpg)).
 ```
-./cdmpv.sh {GUEST_RES} ( {GUEST_FPS = guest's x11 fps or refresh rate}( {RMPV = upscaled video fps}))
-./cdmpv.sh 1280x720 60 30
-./cdmpv.sh 1280x720 74.5 74.5
-./cdmpv.sh 1280x720 74.5 74.5/3
-./cdmpv.sh 1280x720 60 160/3 # If your monitor is 160 Hz
-./cdmpv.sh 1280x720 30
-./cdmpv.sh 1280x720
+./cdmpv.sh {GUEST_RES} ( {GUEST_REFRESH_RATE = nested x11's fps = emulated display refresh rate} ({UPSCALED_FPS = how many frames per second should MPV upscale}))
+./cdmpv.sh 1024x576 60 30
+./cdmpv.sh 1024x576 74.5 74.5
+./cdmpv.sh 1024x576 160 160/3 # If your monitor is 160 Hz
+./cdmpv.sh 1024x576 30
+./cdmpv.sh 1024x576
 
 #Bad: ./cdmpv.sh 1280x720 29.97 29.97
 #Bad: ./cdmpv.sh 1280x720 29.97002997002997003 29.97 #(because what you actually want is ~0.02997002997002997003 which is also impossible to write)
 #Good: ./cdmpv.sh 1280x720 29.97002997002997003 30/1001 #(useful for displays running at 60/1001 Hz=~59.94005994005994006 Hz)
-# 29.97002997002997003 is for the nested X11, 30/1001 is for FFmpeg and v4l2.
+# 29.97002997002997003 here is for the nested X11, 30/1001 is for FFmpeg.
 
 
 ```
 
-
-`GUEST_FPS` is the guest X11's virtual (fake) display's refresh rate = FPS. Rarely games are broken or play too fast when >60 Hz.
-<br/>default `GUEST_X11_FPS_OR_REFRESHRATE` is 60
-<br/>default `UPSCALED_VIDEO_FPS`=30
+If the VNC viewer has fully grabbed your input, then press F11 to show the context menu, then disable "Full screen".
+<br/>`GUEST_REFRESH_RATE` is the guest X11's virtual (fake) display's refresh rate. Rarely gameplay in VNs is broken or becomes too fast when >60 Hz.
+<br/>default `GUEST_REFRESH_RATE` is 60
+<br/>default `UPSCALED_FPS` is 30
 <br/>For ultra low-latency, change `--interpolation` from `yes` to `no` in `x11wid.sh` (command arguments override all file configs).
 <br/>Although I suspect that interpolation is already (forcefully) disabled because no <code>--video-sync=display-resample</code>
 <br/>which I didn't specify because it stops rendering.
 <br/>
-<br/>By default MPV uses the config provided here, not yours in ~/.config/mpv/
-<br/>because there is at least 20% chance that your config is bad.
-<br/>You can change that by removing the option in mpv.sh.
+<br/>By default MPV uses the config provided here in `./mpvcfg/` instead of yours in `$HOME/.config/mpv/`
+<br/>because there is at least 20% chance that your config is bad for this use case.
+<br/>You can change that by setting `MPV__CONFIG_DIR` to `$HOME/.config/mpv` (use `$HOME` instead of `~` just in case) in `config.sh`
 <br/>
-<br/>i3 WM launched in the guest X11 uses the `i3-child-config` file here.
+<br/>i3 WM launched in the nested X11 uses the `i3-child-config` file from here.
 
 ## Why is VNC needed?
 It is the only way to control a nested X11.
-<br/>By the way, I'll soon add an alternative script that uses `kwin_wayland` instead of X11/Xvnc.
+<br/>By the way, I'll probably soon add an alternative script that uses `kwin_wayland` instead of X11/Xvnc.
 
 ## Dependencies to use cdmpv
 #### 1) Install VNC server and client
@@ -159,14 +159,9 @@ killall mpv
 MP=4 ./x11wid.sh
 ```
 
-Actually no, in many VNs there is an animated icon in the dialog,
+Actually no, in many VNs there is an animated icon in the dialog window,
 <br/>which causes to rerender everything (BTW, my future upscaler upscales only changed regions),
 <br/>so if you don't want your GPU's fan to be 100%, then increase `MP`.
-<br/>
-<br/>
-<br/>Also see `max=` line in `x11wid.sh` which forces to render the frame every N second.
-<br/>Without it what happens is that if you switch to another desktop, then back,
-<br/>then you would have black screen until FFmpeg supplies a new frame.
 
 ## Environment variable: C
 See the code in x11wid.sh, there is code only for 800x600
@@ -372,10 +367,10 @@ When 1280x720→1920x1080, then AiUpscale_HQ_3x_LineArt has much better SSIM tha
 <br/>`Anime4K_Clamp_Highlights.glsl` is needed because upscalers accidentally create very bright micro areas.
 <br/>Anime4K_Upscale_*CNN*_ hates small details. I tried to fix it: `Anime4K_Upscale_CNN_x2_ULF-KrigBilateral-noise.glsl` but it's not always good.
 <br/>TsubaUP is good for everything except 2D (especially hair is bad).
-<br/>FSRCNNX is kinda like TsubaUP but slower but better hair.
-<br/>I tested only VNs, but FSRCNNX_x2_56-16-4-1.glsl is always worse than _16.
+<br/>FSRCNNX is kinda like TsubaUP but slower but upscales hair better.
+<br/>I tested only VNs, but FSRCNNX_x2_56-16-4-1.glsl is always worse than _16, so I didn't include it.
 <br/>The latest revision of SSimDownscaler.glsl does something bad to eyes,
-<br/>so the previous October 8 revision is used that I named `SSimDownscaler_oct8.glsl`
+<br/>so the previous 2021-10-08 revision is used that I named `SSimDownscaler_oct8.glsl`
 <br/>`nnedi3-nns128-win8x6.hook` is very bad, so not even included.
 <br/>`Anime4K_Upscale_GAN_x4_UUL.glsl` (two `U`) thins lines too much. Probably it was created for ancient anime videos.
 <br/>`Anime4K_Upscale_GAN_x4_UL.glsl` is not worth if I remember correctly.
@@ -384,18 +379,18 @@ When 1280x720→1920x1080, then AiUpscale_HQ_3x_LineArt has much better SSIM tha
 <br/>
 <br/>`Anime4K*Restore*UL` work only on Vulkan.
 <br/>
-<br/>(POSTKERNEL stage is used right before MPV downscales the image with the algo chose in `dscale`. MPV doesn't always downscale, only when needed.
+<br/>(<code>POSTKERNEL</code> stage is used right before MPV downscales the image with the algo chosen in `dscale`. MPV downscales only when needed.
 <br/>
 <br/>SSimDownscaler (POSTKERNEL stage shader) is a sharpener. If the image is not going to be downscaled afterwards by MPV, then this shader is not used because it would introduce many artifacts.
-<br/>SSimSuperRes.glsl (POSTKERNEL stage shader) is upscaler
+<br/><code>SSimSuperRes.glsl</code> (POSTKERNEL stage shader) is a fast upscaler without neural networks.
 
 
 ## Tips
 1) Disable auto cursor move (i.e. you click "Save game", and your mouse moves to the "Yes" button) in the game menu
-<br/>because the game runs in guest X11
-<br/>and it sends the mouse move command only to the guest X11,
+<br/>because the game runs in nested X11
+<br/>and it sends the mouse move command only to the nested X11,
 <br/>so the next time you move your mouse,
-<br/>your guest X11's mouse position reverts to the host's one.
+<br/>your nested X11's mouse position reverts to the host's one.
 
 2)
 `wine explorer /desktop=cdmpv,$YOURGUESTRESOLUTION`
@@ -404,20 +399,21 @@ or
 <br/>enables wine's own virtual desktop just for current session (doesn't add nor overwrite `[Software\\Wine\\Explorer\\Desktops]` in your `$WINEPREFIX/user.reg`), which is sometimes needed because `i3` is a *tiling* window manager, i.e. when you have one window, its size is fullscreen, but if you open a second window, both windows would get automatically the same size—half of the screen each. You can press Win+W or Win+Space or Win+Shift+Space to control that.
 <br/>One wineprefix can have multiple of them.
 
-3) If you want Steam to be in host X11/Wayland but you want the game be in nested X11, then go into game's options -> command arguments -> env DISLPAY=:99 %command%
+3) If you want Steam to be in host X11/Wayland but you want the game to be in nested X11, then go into game's options -> command arguments -> env DISLPAY=:44 %command%
 
 4) Black screen in Saku Saku Cherry Blossoms and flickering in Grisaia, Himawari, Ikinari Anata ni Koishiteiru
-<br/>If an .exe tells a strange error as soon as you launch it, then that's because you set STAGING_WRITECOPY=1 somewhere.
-<br/>If you still have graphical glitches, then use both dgVoodoo2 (you can read about it in the "Alternative to cdmpv" section) AND software rendering AND *un*installed DXVK, which is 100% performance-wise enough for VNs:
+<br/>If you have graphical glitches, then use dgVoodoo2 (see the below section).
+<br/>If you still have graphical glitches or crashes when a video starts to play, then use dgVoodoo2 (you can read about it in the "Alternative to cdmpv" section) AND software rendering AND *un*installed DXVK, which is 100% performance-wise enough for VNs:
 ```
-__GLX_VENDOR_LIBRARY_NAME=mesa LIBGL_ALWAYS_SOFTWARE=1 VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/lvp_icd.x86_64.json  MESA_LOADER_DRIVER_OVERRIDE=zink
+__GLX_VENDOR_LIBRARY_NAME=mesa LIBGL_ALWAYS_SOFTWARE=1 VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/lvp_icd.x86_64.json MESA_LOADER_DRIVER_OVERRIDE=zink
 ```
+<br/>
+<br/>If an .exe file says a strange error as soon as you launch it, then that's because you set <code>STAGING_WRITECOPY=1</code> somewhere (<code>env|grep STAGING</code> or <code>.bashrc</code>/<code>.zshrc</code>).
 <br/>
 <br/>BTW, when using NVIDIA GPU (I don't know about other GPUs) inside *nested* X11 there is a problem with <code>glxinfo</code> (fails to start every 5th time) and videos (they either always fail or never) in some VNs:
 <br/>E.g. Akeiro Kaikitan as soon as it tries to play a video, the wine process finishes with X11 error (`BadAlloc (insufficient resources for operation)`, opcodes: `150 (GLX), 5 (X_GLXMakeCurrent), 0, 42`)
 <br/>Also I found out that Akeiro Kaikitan saves the read messages only after manually exiting the whole game, not when returning to main menu.
-<br/>
-<br/>The workaround is the same as above but probably only __GLX_VENDOR_LIBRARY_NAME=mesa is enough, i.e. using software rendering, but dgVoodoo2 is not necessary.
+<br/>The workaround for this is the same as above but probably only __GLX_VENDOR_LIBRARY_NAME=mesa is enough, i.e. using software rendering, but dgVoodoo2 is not necessary.
 <br/><code>__GLX_VENDOR_LIBRARY_NAME=mesa</code> applies only to OpenGL; so if you see the DXVK log, then your GPU is used.
 <br/>Also you can use that env variable for the entire X11:
 ```
@@ -442,6 +438,18 @@ Don't forget about `WINEPREFIX=`
 5) In one case (Schatten) as soon as you start it, there's a unskippable video which is displayed black and played for 1 minute.
 
 6) Use [wine-tkg](https://github.com/Frogging-Family/wine-tkg-git)
+
+## dgVoodoo 2 (Freeware, not Open Source)
+http://dege.freeweb.hu/dgVoodoo2/dgVoodoo2/#latest-stable-version (no https)
+<br/>
+<br/>The dgVoodoo 2's .exe is a GUI for creating `dgVoodoo.conf`. You don't need to use it.
+<br/>Copy `D3D8.dll`, `D3D9.dll` (maybe also `D3DImm.dll`, `DDraw.dll`) from `%dgVoodoo2UnpackedPath%/MS/x86/` into the folder containing game's .exe.
+<br/>The game will automatically use the files.
+<br/>BTW, you can replace all `.dll`s in `$WINEPREFIX/.wine/drive_c/windows/syswow64/` (but pay attention to upper/lower case, so that you would not have `d3d9.dll` AND `D3D9.dll`), but I don't know what Valve's VAC would think about that. I had to do that for `The Fruit of Grisaia` (though I still needed `dgVoodoo.conf`).
+
+*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*
+<br/>Use `dgVoodoo-ini/createDgVoodooConf.sh VN_origWidth_in_px VN_origHeight_in_px 60 60` to create your own `dgVoodoo.conf`.
+<br/>*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*
 
 
 ## Current Algorithm of ./cdmpv.sh
@@ -498,32 +506,23 @@ I couldn't run Magpie in VirtualBox. Maybe because VirtualBox GPU Driver support
 <br/>If I force CPU powersave mode (max clock rate decrease from 3550 to 1550 MHz), then FPS in VMware is 3 or 4, not 8.
 <br/>Note that I have only one RAM module (16 GB@3000MHz).
 <br/>And when FPS is low, sound stutters every ~200 ms. And when I just play the game in VMware without Magpie, FPS is good, but every ~40 secs, sound stutters for 2-3 seconds.
-<br/>Maybe problems with VMware are because I use the NVIDIA proprietary driver.
+<br/>Maybe problems with VMware are because I use the evil NVIDIA proprietary driver.
 
 
 ## Alternatives with far worse upscaling
+### lanczos-3 by dgVoodoo 2
+Use the above "dgVoodoo2" section but change <code>Resolution</code> to e.g. <code>1920x1080@144</code>.
+<br/>Then just launch the game with Wine without any cdmpv's scripts.
+
 ### Alternative to this method for proprietary NVIDIA Linux users
 Before I started using this hacky VNC approach, I had been using everywhere DXVK +
 ```
 __GL_SHARPEN_VALUE=90 __GL_SHARPEN_IGNORE_FILM_GRAIN=90
 ```
 Although the prefix is `__GL_`, they apply to Vulkan too.
-<br/>Some VNs like `Shinigami no Kiss Wa Wakare no Aji` and `Wanko to Kurasou` somehow don't use DirectX (they use DirectDraw I think), so no sharpening there (and dgVoodoo 2 doesn't work too).
-### Alternative to cdmpv
-dgVoodoo 2 (Freeware, not Open Source).
-<br/>http://dege.freeweb.hu/dgVoodoo2/dgVoodoo2/#latest-stable-version (no https)
-<br/>
-<br/>This alternative produces better output than the NVIDIA-only sharpening.
-<br/>The dgVoodoo 2's .exe is a GUI for creating `dgVoodoo.conf`. You don't need to use it.
-<br/>Copy `D3D8.dll`, `D3D9.dll` and `dgVoodoo.conf` (maybe also `D3DImm.dll`, `DDraw.dll`) from `%dgVoodoo2UnpackedPath%/MS/x86/` into the folder containing game's .exe.
-<br/>The game will automatically use the files.
-<br/>BTW, you can replace all `.dll`s in `$WINEPREFIX/.wine/drive_c/windows/syswow64/` (but pay attention to upper/lower case, so that you would not have `d3d9.dll` AND `D3D9.dll`), but I don't know what Valve's VAC would think about that. I had to do that for `The Fruit of Grisaia` (though I still needed `dgVoodoo.conf`).
+<br/>Some VNs like `Shinigami no Kiss Wa Wakare no Aji` and `Wanko to Kurasou` somehow don't use DirectX (they use DirectDraw I think), so no sharpening is there (and dgVoodoo 2 doesn't work too).
 
-*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*
-<br/>Use `dgVoodoo-ini/createDgVoodooConf.sh` to create your `dgVoodoo.conf`.
-<br/>*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*
-
-#### Changes from the original the dgVoodoo.conf:
+#### How dgVoodoo.conf differs from the original default file:
 `Resampling` from `bilinear` to `lanzcos-3`
 <br/>`FullscreenAttributes =` to `FullscreenAttributes = Fake`
 <br/>`FPSLimit = 0` to `FPSLimit = 144` (if your monitor is 144 Hz)
@@ -531,7 +530,7 @@ dgVoodoo 2 (Freeware, not Open Source).
 <br/>`DisableAltEnterToToggleScreenMode` to `false`
 <br/>In `[DirectX]`: `Resolution = unforced` to `Resolution = 1920x1080@144` (*NOTE*: it should remain `unforced` if you don't use dgVoodoo's upscaling)
 <br/>In `[DirectX]`: `VRAM = 256` to `VRAM = 512`
-<br/>`dgVoodooWatermark` to `true` to check if the dgVoodoo 2 is used.
+<br/>`dgVoodooWatermark` to `true` to check if dgVoodoo 2 is being used.
 <br/>Then change it back to `false` if all is OK.
 <br/>Detailed info on all options: https://www.pcgamingwiki.com/wiki/DgVoodoo_2
 
@@ -571,8 +570,8 @@ Which downscaling algorithm is used is very important.
 <br/>I use `feh` to look at how much info is lost and how smooth are lines.
 <br/>
 <br/>Also I made an experiment:
-<br/>I downscaled 1920x1080 original to 1280x720 with every dscaler, then upscaled it back with one upscaler.
-<br/>I am lazy to search my result file, but lanczos and catmull_rom are the best (or it was spline16/36/64 with almost the same score, I forgot).
+<br/>I downscaled an 1920x1080 original image to 1280x720 with every dscaler, then upscaled them back with one upscaler.
+<br/>I am lazy to find my result file, but lanczos and catmull_rom are the best (or it was spline16/36/64 with almost the same score, I forgot).
 <br/>
 <br/>At least for 2D.
 
@@ -581,6 +580,6 @@ Everything that **\*I\*** did in `cdmpv` is under CC0 (Public Domain).
 <br/>Everything that was not done by me is obviously under other licenses.
 
 ## My other related projects
-[sugoi-web](https://arzeth.github.io/sugoi-web/) Web Frontend for Sugoi-Japanese-Translator
+[sugoi-web](https://arzeth.github.io/sugoi-web/) Web Frontend for Sugoi-Japanese-Translator (offline & better than DeepL).
 
 

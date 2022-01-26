@@ -17,6 +17,11 @@ VNC_SOCKET_PATH=
 VNC_SOCKET_PERMS=0600
 GUEST_DISPLAY=:44
 
+# Without it what happens is that if you switch to another desktop, then back,
+# then you would have black screen until FFmpeg supplies a new frame.
+# Doesn't work if the environment variable MP is set to 0 (default MP=2)
+FORCE_RERENDER_EVERY=1.0
+
 MPV__CONFIG_DIR="$DIR/mpvcfg"
 MPV__INPUT_CONF="$DIR/mpvcfg/input.conf"
 MPV__SHADER_CACHE="$HOME/.config/mpv/shader_cache"

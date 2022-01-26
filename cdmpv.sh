@@ -258,10 +258,10 @@ echo GUEST_RES = ${GUEST_RES}
 
 
 # Maybe there are games that don't like a refresh rate <60 Hz
-export GUEST_FPS="${2:-60}"
+export GUEST_REFRESH_RATE="${2:-60}"
 # How many FPS we will see in mpv.
 # I.e, how many frames per second your GPU can upscale using your shader chain.
-export RMPV="${3:-30}"
+export UPSCALED_FPS="${3:-30}"
 
 
 if [[ "${STUPIDI3ONLYMETHOD}" == "1" ]]
@@ -305,7 +305,7 @@ bash "${DIR}"/cdmpvTempBgTasks.sh 123456 &
 #(sleep 2 && (xrandr -s ${GUEST_RES} || true) && env I3SOCK="${DIR}/i3-ipc-socket.%p" i3 -c "${DIR}/i3-child-config") &
 #(
 #	sleep 4 && # THIS IS THE MOST IMPORTANT NUMBER TO THE PERFORMANCE, how many frames per second send to fake webcam
-#	(bash "${DIR}"/x11grab.sh "${RMPV}" "${GUEST_RES}" &) &&
+#	(bash "${DIR}"/x11grab.sh "${UPSCALED_FPS}" "${GUEST_RES}" &) &&
 #	sleep 3 &&
 #	(env DISPLAY=${HOST_DISPLAY} WAYLAND_DISPLAY=${HOST_WAYLAND_DISPLAY} screen -Dm -S mpv0 mpv --no-fs --profile=low-latency --no-pause av://v4l2:${CAM} &) &&
 #	(env DISPLAY=${HOST_DISPLAY} WAYLAND_DISPLAY=${HOST_WAYLAND_DISPLAY} gvncviewer :0 &) &&

@@ -5,8 +5,8 @@ source "${DIR}"/config.sh
 source "${DIR}"/vars.sh
 source "${DIR}"/.env-of-current-process
 GUEST_RES=${1:-${GUEST_RES:-800x600}}
-GUEST_FPS=${2:-${GUEST_FPS:-60}}
-RMPV=${3:-${RMPV:-10}}
+GUEST_REFRESH_RATE=${2:-${GUEST_REFRESH_RATE:-60}}
+UPSCALED_FPS=${3:-${UPSCALED_FPS:-10}}
 D=${4:-${GUEST_DISPLAY:-${DISPLAY}}}
 #D=${D/:/}
 
@@ -72,7 +72,7 @@ fi
 
 
 
-max=`calc "floor($RMPV * 1.0)" | sed 's/\s//g' | tr -d "\n"`
+max=`calc "floor($UPSCALED_FPS * $FORCE_RERENDER_EVERY)" | sed 's/\s//g' | tr -d "\n"`
 
 UU1="rawvideo"
 UU2="-vf"
@@ -115,7 +115,7 @@ DISPLAY="${D}" "$FFMPEG" -hide_banner -nostdin -fflags '+flush_packets' \
 -vsync vfr \
 -nostats \
 -f x11grab \
--framerate "${RMPV}" \
+-framerate "${UPSCALED_FPS}" \
 -i "${D}".0+0,0 \
 \
 -c:v "$UU1" \
@@ -159,7 +159,7 @@ DISPLAY="${HOST_DISPLAY}" WAYLAND_DISPLAY="${HOST_WAYLAND_DISPLAY}" "$MPV" \
 --demuxer-lavf-probe-info=nostreams \
 --demuxer-lavf-analyzeduration=0.1 \
 --demuxer-readahead-secs=0 \
---demuxer-rawvideo-fps="${RMPV}" \
+--demuxer-rawvideo-fps="${UPSCALED_FPS}" \
 --no-correct-pts --untimed --cache-pause=no --no-pause - \
 #-vf 'scale=w=640:h=360:flags=lanczos,setpts=(RTCTIME - RTCSTART) / (TB * 1000000)' \
 
