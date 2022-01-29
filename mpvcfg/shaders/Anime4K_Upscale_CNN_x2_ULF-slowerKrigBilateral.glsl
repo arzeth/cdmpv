@@ -1854,7 +1854,6 @@ vec4 hook() {
 //!WIDTH HOOKED.w
 //!HEIGHT HOOKED.h
 //!OFFSET ALIGN
-//!SAVE MAIN
 //!DESC KrigBilateral Upscaling UV
 
 #define sqr(x)      dot(x,x)

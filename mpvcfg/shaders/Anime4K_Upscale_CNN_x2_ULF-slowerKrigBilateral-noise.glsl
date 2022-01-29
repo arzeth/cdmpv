@@ -39,36 +39,24 @@ vec4 hook() {
 }
 
 //!HOOK MAIN
-//!BIND HOOKED
-//!SAVE LOWRES_Y
-//!COMPONENTS 1
-//!WIDTH HOOKED.w
-//!HEIGHT HOOKED.h
-vec4 hook ()
-{
-    return vec4(
-		(
-			mat3(0.2126,-0.09991,0.615,0.7152,-0.33609,-0.55861,0.0722,0.436,-0.05639)*HOOKED_tex(HOOKED_pos).rgb
-		).x,
-		0,0,0
-	);
-}
-
-
-//!HOOK MAIN
 //!BIND MAIN
 //!WIDTH MAIN.w
 //!HEIGHT MAIN.h
-//!COMPONENTS 4
-//!SAVE MAIN
 
 // Change this to tune the strength of the noise
 // Apparently this has to be float on some setups
-#define STRENGTH 220.0
-//^ 220 improves SSIM but there is visible noise on white bg
-//220 is the best SSIM
-//150 => tmpvk12 0.003482213901122868
-//160 => tmpvk12 0.003474808904664766
+#define STRENGTH 320.0
+// SSIM:
+// 60  ⇒ 0.003681572906947287
+// 160 => 0.0034563423781667816
+// 220 ⇒ 0.0033535064060950842
+// 260 ⇒ 0.003301794947646612
+// 300 ⇒ 0.003261146734237132
+// 320 ⇒ 0.003244548416460475
+// 400 ⇒ 0.0031945167069293875
+// 500 ⇒ 0.0031620850086005914
+// 560 ⇒ 0.0031542018316221268
+// 600 ⇒ 0.003151581617229352
 
 // PRNG taken from mpv's deband shader
 float mod289(float x)  { return x - floor(x / 289.0) * 289.0; }
@@ -77,6 +65,13 @@ float rand(float x)    { return fract(x / 41.0); }
 
 vec4 hook()  {
     vec4 old = MAIN_tex(MAIN_pos);
+    if ( // don't noise the pink color
+        old.g < old.r * 0.7
+        &&
+        old.g < old.b * 0.7
+        &&
+        old.b * 0.97 < old.r && old.r < old.b * 1.43
+    ) return old;
     //if (old.r > 0.9 && old.g > 0.9 && old.b > 0.9) return old;
     vec3 oldAsYUV = mat3(0.2126,-0.09991,0.615,0.7152,-0.33609,-0.55861,0.0722,0.436,-0.05639)*old.rgb;
     ////if (oldAsYUV.x > 0.9) return old;
@@ -87,10 +82,20 @@ vec4 hook()  {
     noise.x = rand(h); h = permute(h);
     noise.y = rand(h);
     oldAsYUV.yz += (vec2(STRENGTH/8192.0) * (noise - 0.5));
-    return vec4(mat3(1,1,1,0,-0.21482,2.12798,1.28033,-0.38059,0) * oldAsYUV.xyz, old.a);
+    vec4 ret = vec4(mat3(1,1,1,0,-0.21482,2.12798,1.28033,-0.38059,0) * oldAsYUV.xyz, old.a);
+    if ( // don't noise the pink color
+        ret.g < ret.r * 0.7
+        &&
+        ret.g < ret.b * 0.7
+        &&
+        ret.b * 0.97 < ret.r && ret.r < ret.b * 1.43
+    ) return old;
+    return ret;
     //return vec4(oldAsYUV, old.a);
     //return MAIN_tex(MAIN_pos) + vec4(STRENGTH/8192.0) * (noise - 0.5);
 }
+
+
 
 
 //!DESC Anime4K-v3.2-Upscale-CNN-x2-(UL)-Conv-4x3x3x3
@@ -1746,12 +1751,12 @@ vec4 hook() {
     float c2 = conv2d_last_tf2_tex((vec2(0.5) - f2) * conv2d_last_tf2_pt + conv2d_last_tf2_pos)[i2.y * 2 + i2.x];
     float c3 = c2;
     return vec4(c0, c1, c2, c3) + MAIN_tex(MAIN_pos);
-    vec4 old = MAIN_tex(MAIN_pos);
+    /*vec4 old = MAIN_tex(MAIN_pos);
     vec3 oldAsYUV = mat3(0.2126,-0.09991,0.615,0.7152,-0.33609,-0.55861,0.0722,0.436,-0.05639)*old.rgb;
     vec4 new = vec4(c0, c1, c2, c3) + old;
     vec3 newAsYUV = mat3(0.2126,-0.09991,0.615,0.7152,-0.33609,-0.55861,0.0722,0.436,-0.05639)*new.rgb;
     oldAsYUV.x = newAsYUV.x;
-    return vec4(mat3(1,1,1,0,-0.21482,2.12798,1.28033,-0.38059,0) * oldAsYUV.xyz, new.a);
+    return vec4(mat3(1,1,1,0,-0.21482,2.12798,1.28033,-0.38059,0) * oldAsYUV.xyz, new.a);*/
 }
 
 
@@ -1779,7 +1784,6 @@ vec4 hook ()
 
 
 
-/*
 
 
 
@@ -1791,12 +1795,15 @@ vec4 hook ()
 
 
 
-// # HOOK MAIN
-// # BIND OLDCHROMA
-// # BIND HIGHRES_Y
-// # SAVE LOWRES_Y
-// # WIDTH HIGHRES_Y.w
-// # DESC KrigBilateral Downscaling Y pass 1
+
+//!HOOK MAIN
+//!BIND OLDCHROMA
+//!BIND HIGHRES_Y
+//!WIDTH OLDCHROMA.w
+//!HEIGHT OLDCHROMA.h
+//!SAVE LOWRES_Y
+//!COMPONENTS 2
+//!DESC KrigBilateral Downscaling Y pass 1
 
 #define offset      vec2(0)
 
@@ -1828,11 +1835,14 @@ vec4 hook() {
     return avg;
 }
 
-// # HOOK MAIN
-// # BIND OLDCHROMA
-// # BIND LOWRES_Y
-// # SAVE LOWRES_Y
-// # DESC KrigBilateral Downscaling Y pass 2
+//!HOOK MAIN
+//!BIND OLDCHROMA
+//!BIND LOWRES_Y
+//!WIDTH OLDCHROMA.w
+//!HEIGHT OLDCHROMA.h
+//!SAVE LOWRES_Y
+//!COMPONENTS 2
+//!DESC KrigBilateral Downscaling Y pass 2
 
 #define offset      vec2(0)
 
@@ -1873,7 +1883,7 @@ vec4 hook() {
 
 
 
-*/
+
 
 
 // KrigBilateral by Shiandow
@@ -1896,10 +1906,10 @@ vec4 hook() {
 //!HOOK MAIN
 //!BIND OLDCHROMA
 //!BIND HIGHRES_Y
-//!BIND MAIN
+//!BIND HOOKED
 //!BIND LOWRES_Y
-//!WIDTH MAIN.w
-//!HEIGHT MAIN.h
+//!WIDTH HOOKED.w
+//!HEIGHT HOOKED.h
 //!OFFSET ALIGN
 //!DESC KrigBilateral Upscaling UV
 
@@ -1922,6 +1932,16 @@ vec4 hook() {
 #define I9(f, n)    I3(f, n) I3(f, n+3) I3(f, n+6)
 
 vec4 hook() {
+    vec4 old = MAIN_tex(MAIN_pos);
+    if (old.r < 0.005/* && old.g < 0.02 && old.b < 0.02*/) return old; // not damaged ⇒ don't fix
+    if (old.r > 0.98 && old.g > 0.98 && old.b > 0.98) return old; // not damaged ⇒ don't fix
+    if ( // don't fix the pink color
+        old.g < old.r * 0.7
+        &&
+        old.g < old.b * 0.7
+        &&
+        old.b * 0.97 < old.r && old.r < old.b * 1.43
+    ) return old;
     vec2 pos = OLDCHROMA_pos * OLDCHROMA_size - vec2(0.5);
     vec2 offset = pos - round(pos);
     pos -= offset;
@@ -2016,7 +2036,6 @@ vec4 hook() {
     interp += b[0] * (X[0] - X[N]).zw;
 
     //return interp.xyxy;
-    vec4 old = MAIN_tex(MAIN_pos);
     vec3 oldAsYUV = mat3(0.2126,-0.09991,0.615,0.7152,-0.33609,-0.55861,0.0722,0.436,-0.05639)*old.rgb;
     oldAsYUV.y = interp.x;
     oldAsYUV.z = interp.y;

@@ -350,7 +350,7 @@ Because with Anime4K_Upscale_CNN_x2_* everything was a little (e.g. Red 40/255 â
 <br/>Although the input is still RGB, only Y channel and U channel are upscaled by Anime4K, while V is upscaled by KrigBilateral embedded in the same file.
 <br/>It requires a little more VRAM (to store both the upscaled image and also the original image).
 <br/>V channel only is because there's something wrong with upscaling U channel. FIXME!
-<br/><code>+o</code> uses the 3% slower <code>Anime4K_Upscale_CNN_x2_ULF-slowerKrigBilateral.glsl</code> that has 0.1% better colors (KrigBilaterial is used for both U and V channels here).
+<br/><code>+o</code> uses a little bit slower <code>Anime4K_Upscale_CNN_x2_ULF-slowerKrigBilateral-noise.glsl</code> that doesn't damage background images. <code>+o</code> has the best SSIM possible for Anime4K CNN upscale shaders.
 
 
 If a shader file has `F` at the end, then that means that this shader will be *f*orcefully (no `//!WHEN`) used even the input resolution is bigger than display resolution.
@@ -372,7 +372,7 @@ AiUpscale_HQ_4x_LineArt is worse than _3x, at least for 2D,
 ## About shaders
 When 1280x720â†’1920x1080, then AiUpscale_HQ_3x_LineArt has much better SSIM than AiUpscale_HQ_2x_LineArt for 2D sprites, but the overall SSIM is worse (~0.00234 vs ~0.00263) because background images are not very anime.
 <br/>`Anime4K_Clamp_Highlights.glsl` is needed because upscalers accidentally create very bright micro areas.
-<br/>Anime4K_Upscale_*CNN*_ hates small details. I tried to fix it: `Anime4K_Upscale_CNN_x2_ULF-KrigBilateral-noise.glsl` but it's not always good.
+<br/>Anime4K_Upscale_*CNN*_ hates small details, so I fixed this by prenoising the chroma and then replacing the Anime4K CNN's chroma with KrigBilateral's (both U and V) that is supplied the original chroma. The file is <code>Anime4K_Upscale_CNN_x2_ULF-slowerKrigBilateral-noise.glsl</code>
 <br/>TsubaUP is good for everything except 2D (especially hair is bad).
 <br/>FSRCNNX is kinda like TsubaUP but slower but upscales hair better.
 <br/>I tested only VNs, but FSRCNNX_x2_56-16-4-1.glsl is always worse than _16, so I didn't include it.
