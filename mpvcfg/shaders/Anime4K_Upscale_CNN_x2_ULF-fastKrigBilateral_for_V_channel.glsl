@@ -21,25 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-//!HOOK MAIN
-//!BIND HOOKED
-//!WIDTH MAIN.w
-//!HEIGHT MAIN.h
-//!COMPONENTS 2
-//!SAVE OLDCHROMA
-
-vec4 hook() {
-	return vec4(
-		(
-			mat3(0.2126,-0.09991,0.615,0.7152,-0.33609,-0.55861,0.0722,0.436,-0.05639)*HOOKED_tex(HOOKED_pos).rgb
-		).yz,
-		0,
-        0
-	);
-}
-
-
-
 
 //!DESC Anime4K-v3.2-Upscale-CNN-x2-(UL)-Conv-4x3x3x3
 //!HOOK MAIN
@@ -1705,129 +1686,6 @@ vec4 hook() {
 
 
 
-//!HOOK MAIN
-//!BIND HOOKED
-//!SAVE HIGHRES_Y
-//!WIDTH HOOKED.w
-//!HEIGHT HOOKED.h
-//!COMPONENTS 1
-vec4 hook ()
-{
-    return vec4(
-		(
-			mat3(0.2126,-0.09991,0.615,0.7152,-0.33609,-0.55861,0.0722,0.436,-0.05639)*HOOKED_tex(HOOKED_pos).rgb
-		).x,
-		0,0,0
-	);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//!HOOK MAIN
-//!BIND OLDCHROMA
-//!BIND HIGHRES_Y
-//!WIDTH OLDCHROMA.w
-//!HEIGHT OLDCHROMA.h
-//!SAVE LOWRES_Y
-//!COMPONENTS 2
-//!DESC KrigBilateral Downscaling Y pass 1
-
-#define offset      vec2(0)
-
-#define axis        1
-
-#define Kernel(x)   dot(vec3(0.42659, -0.49656, 0.076849), cos(vec3(0, 1, 2) * acos(-1.) * (x + 1.)))
-
-vec4 hook() {
-    // Calculate bounds
-    float low  = ceil((HIGHRES_Y_pos - OLDCHROMA_pt) * HIGHRES_Y_size - offset - 0.5)[axis];
-    float high = floor((HIGHRES_Y_pos + OLDCHROMA_pt) * HIGHRES_Y_size - offset - 0.5)[axis];
-
-    float W = 0.0;
-    vec4 avg = vec4(0);
-    vec2 pos = HIGHRES_Y_pos;
-
-    for (float k = low; k <= high; k++) {
-        pos[axis] = HIGHRES_Y_pt[axis] * (k - offset[axis] + 0.5);
-        float rel = (pos[axis] - HIGHRES_Y_pos[axis])*OLDCHROMA_size[axis];
-        float w = Kernel(rel);
-
-        vec4 y = textureGrad(HIGHRES_Y_raw, pos, vec2(0.0), vec2(0.0)).xxxx * HIGHRES_Y_mul;
-        y.y *= y.y;
-        avg += w * y;
-        W += w;
-    }
-    avg /= W;
-    avg.y = abs(avg.y - avg.x * avg.x);
-    return avg;
-}
-
-//!HOOK MAIN
-//!BIND OLDCHROMA
-//!BIND LOWRES_Y
-//!WIDTH OLDCHROMA.w
-//!HEIGHT OLDCHROMA.h
-//!SAVE LOWRES_Y
-//!COMPONENTS 2
-//!DESC KrigBilateral Downscaling Y pass 2
-
-#define offset      vec2(0)
-
-#define axis        0
-
-#define Kernel(x)   dot(vec3(0.42659, -0.49656, 0.076849), cos(vec3(0, 1, 2) * acos(-1.) * (x + 1.)))
-
-vec4 hook() {
-    // Calculate bounds
-    float low  = ceil((LOWRES_Y_pos - OLDCHROMA_pt) * LOWRES_Y_size - offset - 0.5)[axis];
-    float high = floor((LOWRES_Y_pos + OLDCHROMA_pt) * LOWRES_Y_size - offset - 0.5)[axis];
-
-    float W = 0.0;
-    vec4 avg = vec4(0);
-    vec2 pos = LOWRES_Y_pos;
-
-    for (float k = low; k <= high; k++) {
-        pos[axis] = LOWRES_Y_pt[axis] * (k - offset[axis] + 0.5);
-        float rel = (pos[axis] - LOWRES_Y_pos[axis])*OLDCHROMA_size[axis];
-        float w = Kernel(rel);
-
-        vec4 y = textureGrad(LOWRES_Y_raw, pos, vec2(0.0), vec2(0.0)).xxxx * LOWRES_Y_mul;
-        y.y *= y.y;
-        avg += w * y;
-        W += w;
-    }
-    avg /= W;
-    avg.y = abs(avg.y - avg.x * avg.x) + LOWRES_Y_texOff(0).y;
-    return avg;
-}
-
-
-
-
-
-
-
-
-
-
-
-
 
 // KrigBilateral by Shiandow
 //
@@ -1848,13 +1706,12 @@ vec4 hook() {
 
 //!HOOK MAIN
 //!BIND OLDCHROMA
-//!BIND HIGHRES_Y
-//!BIND HOOKED
-//!BIND LOWRES_Y
-//!WIDTH HOOKED.w
-//!HEIGHT HOOKED.h
+//!BIND MAIN
+//!BIND OLDLUMA
+//!WIDTH MAIN.w
+//!HEIGHT MAIN.h
 //!OFFSET ALIGN
-//!DESC KrigBilateral Upscaling UV
+//!DESC KrigBilateral Upscaling, only V channel
 
 #define sqr(x)      dot(x,x)
 #define sigma_nsq   256.0/(255.0*255.0)
@@ -1866,7 +1723,7 @@ vec4 hook() {
 #define C(i,j)      (inversesqrt(1.0 + (X[i].y + X[j].y) / Var) * exp(-0.5 * (sqr(X[i].x - X[j].x) / (localVar + X[i].y + X[j].y + sigma_nsq) + sqr((coords[i] - coords[j]) / radius))) + (X[i].x - y) * (X[j].x - y) / (Var + sigma_nsq))
 #define c(i)        (inversesqrt(1.0 + X[i].y / Var) * exp(-0.5 * (sqr(X[i].x - y) / (localVar + X[i].y + sigma_nsq) + sqr((coords[i] - offset) / radius))))
 
-#define getnsum(i)  X[i] = vec4(LOWRES_Y_tex(LOWRES_Y_pt*(pos+coords[i]+vec2(0.5))).xy, \
+#define getnsum(i)  X[i] = vec4(OLDLUMA_tex(OLDLUMA_pt*(pos+coords[i]+vec2(0.5))).xy, \
                                 OLDCHROMA_tex(OLDCHROMA_pt*(pos+coords[i]+vec2(0.5))).xy); \
                     w = clamp(1.5 - abs(coords[i] - offset), 0.0, 1.0); \
                     total += w.x*w.y*vec4(X[i].x, X[i].x * X[i].x, X[i].y, 1.0);
@@ -1878,6 +1735,22 @@ vec4 hook() {
     vec4 old = MAIN_tex(MAIN_pos);
     if (old.r < 0.005/* && old.g < 0.02 && old.b < 0.02*/) return old; // not damaged ⇒ don't fix
     if (old.r > 0.98 && old.g > 0.98 && old.b > 0.98) return old; // not damaged ⇒ don't fix
+    if ( // don't fix the pink color
+        old.g < old.r * 0.7
+        &&
+        old.g < old.b * 0.7
+        &&
+        old.b * 0.97 < old.r && old.r < old.b * 1.43
+    ) return old;
+    /*float sumrgbX3 = (old.r + old.g + old.b) / 3;
+    //if (sumrgb / 3 >= sumrgb * 0.97 && sumrgb / 3 <= sumrgb * 1.03) return old;
+    if ( // microoptimization
+         old.r * 0.97 < sumrgbX3 && sumrgbX3 < old.r * 1.03
+&&
+         old.g * 0.97 < sumrgbX3 && sumrgbX3 < old.g * 1.03
+&&
+         old.b * 0.97 < sumrgbX3 && sumrgbX3 < old.b * 1.03
+    ) return old;*/
     vec2 pos = OLDCHROMA_pos * OLDCHROMA_size - vec2(0.5);
     vec2 offset = pos - round(pos);
     pos -= offset;
@@ -1898,7 +1771,7 @@ vec4 hook() {
     float Var = localVar + total.z;
     float radius = 1.0;
 
-    float y = HIGHRES_Y_texOff(0).x;
+    float y = dot(MAIN_texOff(0).rgb, vec3(0.2126, 0.7152, 0.0722)).x;
     float Mx[(N*(N+1))/2];
     float b[N];
     vec2 interp = X[N].zw;
@@ -1973,7 +1846,8 @@ vec4 hook() {
 
     //return interp.xyxy;
     vec3 oldAsYUV = mat3(0.2126,-0.09991,0.615,0.7152,-0.33609,-0.55861,0.0722,0.436,-0.05639)*old.rgb;
-    oldAsYUV.y = interp.x;
+    // FIXME: !!!
+    //oldAsYUV.y = interp.x;
     oldAsYUV.z = interp.y;
     return vec4(mat3(1,1,1,0,-0.21482,2.12798,1.28033,-0.38059,0) * oldAsYUV.xyz, old.a);
 }
