@@ -65,6 +65,7 @@ float rand(float x)    { return fract(x / 41.0); }
 
 vec4 hook()  {
     vec4 old = MAIN_tex(MAIN_pos);
+    if (old.r > 0.98 && old.g > 0.98 && old.b > 0.98) return old;
     if ( // don't noise the pink color
         old.g < old.r * 0.7
         &&
