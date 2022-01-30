@@ -12,9 +12,12 @@ fi
 source "${DIR}"/config.sh
 source "${DIR}"/vars.sh
 
-echo "Every 1-4 days there are updates, so use: git pull"
-echo "Waiting 3.5 seconds just so that you read the above line"
-sleep 3.5
+if [[ "$REMINDER_ABOUT_GIT_PULL" == "1" && -t 0 && "$TERM" != "" && "$WINDOWID" != "" ]]
+then
+	echo "Every 1-4 days there are updates, so use: git pull"
+	echo "Waiting 3.5 seconds just so that you read the above line"
+	sleep 3.5
+fi
 
 trap "trap - SIGTERM && echo 'Caught SIGTERM, sending SIGTERM to process group' && kill -9 -- -$$ && (kill -9 -- `ps h -C mpv -o pid,cmd | grep "${CAM}" | sed -r 's/^\\s+//g' | cut -d' ' -sf1 | tr \"\\n\" \" \"` && echo killed mpv) 2>/dev/null" SIGINT SIGTERM EXIT
 

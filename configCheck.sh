@@ -31,6 +31,10 @@ then
 fi
 
 int_re='^[0-9]+$'
+bool_re='^[01]$'
+#float_re='^[0-9]+(?:\.(?:[0-9]+)?)?$'
+float_re='^[0-9]+$|^[0-9]+\.$|^[0-9]+\.[0-9]+$'
+
 if [[ "$GUEST_DISPLAY" == "" ]]
 then
 	GUEST_DISPLAY=":44"
@@ -52,9 +56,15 @@ then
 	exit 1
 fi
 
+if [[ "$REMINDER_ABOUT_GIT_PULL" == "" ]]
+then
+	REMINDER_ABOUT_GIT_PULL=1
+elif [[ ! "$REMINDER_ABOUT_GIT_PULL" =~ $bool_re ]]
+then
+	>&2 echo 'config.sh: $REMINDER_ABOUT_GIT_PULL must be 0 or 1. Exiting.'
+	exit 1
+fi
 
-#float_re='^[0-9]+(?:\.(?:[0-9]+)?)?$'
-float_re='^[0-9]+$|^[0-9]+\.$|^[0-9]+\.[0-9]+$'
 if [[ "$FORCE_RERENDER_EVERY" == "" ]]
 then
 	FORCE_RERENDER_EVERY=1.0
@@ -65,6 +75,7 @@ then
 fi
 
 unset int_re
+unset bool_re
 unset float_re
 
 

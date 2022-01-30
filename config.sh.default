@@ -17,6 +17,8 @@ VNC_PORT=-1
 VNC_SOCKET_PATH=
 VNC_SOCKET_PERMS=0600
 GUEST_DISPLAY=:44
+# Used only when ./cdmpv.sh is launched in terminal:
+REMINDER_ABOUT_GIT_PULL=1
 
 # Without it what happens is that if you switch to another desktop, then back,
 # then you would have black screen until FFmpeg supplies a new frame.
