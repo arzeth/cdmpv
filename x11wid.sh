@@ -4,11 +4,25 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source "${DIR}"/config.sh
 source "${DIR}"/vars.sh
 source "${DIR}"/.env-of-current-process
-GUEST_RES=${1:-${GUEST_RES:-800x600}}
-GUEST_REFRESH_RATE=${2:-${GUEST_REFRESH_RATE:-60}}
-UPSCALED_FPS=${3:-${UPSCALED_FPS:-10}}
-D=${4:-${GUEST_DISPLAY:-${DISPLAY}}}
 #D=${D/:/}
+
+res_re='^[0-9]+x[0-9]+$'
+fps_re='^[0-9]+(\.[0-9]+)?(/[0-9]+(\.[0-9]+)?)?$'
+
+if [[ "$1" =~ $res_re && "$2" =~ $fps_re ]]
+then
+	UPSCALED_FPS="$2"
+	GUEST_RES="$1"
+else
+	UPSCALED_FPS=${1:-${UPSCALED_FPS:-10}}
+	GUEST_RES=${2:-${GUEST_RES:-800x600}}
+fi
+
+unset res_re
+unset fps_re
+
+
+D=${3:-${GUEST_DISPLAY:-${DISPLAY}}}
 
 
 source "$DIR"/createShaders.sh
@@ -25,7 +39,10 @@ FFMPEG=ffmpeg
 
 if [[ "$GUEST_RES" == "800x600" ]]
 then
-	if [[ "$C" == "2" ]]
+	if [[ "$C" == "" || "$C" == "0" ]]
+	then
+		C=""
+	elif [[ "$C" == "2" ]]
 	then
 		C="800:460:0:70"
 	elif [[ "$C" == "3" ]]
