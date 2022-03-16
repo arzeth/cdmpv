@@ -81,7 +81,7 @@ then
 		if [[ ! -r "$a" ]]; then
 			continue;
 		fi
-		half=1 u=YYY bash "$s/resluma.sh" "$a"
+		percent=50 u=YYY bash "$s/resluma.sh" "$a"
 	done
 fi
 
@@ -96,6 +96,16 @@ then
 		if [[ ! -r "$a" ]]; then
 			continue;
 		fi
-		half=1 u=YYY bash "$s/resluma.sh" "$a"
+		percent=50 u=YYY bash "$s/resluma.sh" "$a"
 	done
+fi
+
+if [[ ! -r "$s/Anime4K_Restore_CNN_Light_Soft_M-YYY-percent70.glsl" ]]
+then
+	for a in "$s/Anime4K_Restore"*.glsl
+	do
+		percent=50 u=YYY bash "$s/resluma.sh" "$a"
+	done
+	percent=75 u=YYY bash "$s/resluma.sh" "$s/Anime4K_Restore_CNN_Moderate_Soft_M.glsl"
+	percent=70 u=YYY bash "$s/resluma.sh" "$s/Anime4K_Restore_CNN_Light_Soft_M.glsl"
 fi

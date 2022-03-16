@@ -2,9 +2,15 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source "${DIR}/inc.sh"
 
-u=${u:-LUMA}
+u="${u:-LUMA}"
 #u=LUMAXXX
 #u=LUMA
+
+if [[ "$YYY" == "1" ]]
+then
+	u=YYY
+fi
+
 
 for a in "$@"
 do
@@ -13,6 +19,7 @@ do
 		|| "${a}" =~ "Krig"
 		|| "${a}" =~ "sxbr"
 		|| "${a}" =~ "ravu"
+		|| "${a}" =~ "percent"
 		|| "${a}" =~ "YYY"
 		|| "${a}" =~ "RGB"
 		|| "${a}" =~ "MAIN"
@@ -33,9 +40,12 @@ do
 	if [[ "${u}" == "LUMA" || "${u}" == "YYY" ]]
 	then
 		b=${a/.glsl/-${u}.glsl}
-		if [[ "$half" == "1" ]]
+		if [[ "$percent" == "50" ]]
 		then
 			b=${b/.glsl/-half.glsl}
+		elif [[ "$percent" != "" ]]
+		then
+			b=${b/.glsl/-percent${percent}.glsl}
 		fi
 	else
 		b=${a/.glsl/-LUMA-var-${u}.glsl}
@@ -76,19 +86,29 @@ fi
 	fi
 	if [[ "${u}" == "YYY" ]]
 	then
-		if [[ "$half" == "1" ]]
+		if [[ "$percent" == "50" ]]
 		then
 			xValue='(resultAsYUV.x + oldAsYUV.x) / 2'
-		else
+		#elif [[ "$percent" == "75" ]]
+		#then
+			#xValue='(resultAsYUV.x + (resultAsYUV.x + oldAsYUV.x) / 2) / 2'
+		#elif [[ "$percent" == "25" ]]
+		#then
+			#xValue='(oldAsYUV.x + (resultAsYUV.x + oldAsYUV.x) / 2) / 2'
+		elif [[ "$percent" == "" ]]
+		then
 			xValue='resultAsYUV.x'
+		else
+			revPercent=`calc "1.0-0.${percent}" | sed 's/[^0-9.]//g' | tr -d "\n"`
+			xValue="oldAsYUV.x < resultAsYUV.x ? oldAsYUV.x + (resultAsYUV.x - oldAsYUV.x) * 0.${percent} : resultAsYUV.x + (oldAsYUV.x - resultAsYUV.x) * ${revPercent}"
 		fi
-		sed -i 's:return result + MAIN_tex(MAIN_pos);:\
+		sed -i 's^return result + MAIN_tex(MAIN_pos);^\
     vec4 old = MAIN_tex(MAIN_pos);\n\
     result += old;\n\
     vec3 resultAsYUV = mat3(0.2126,-0.09991,0.615,0.7152,-0.33609,-0.55861,0.0722,0.436,-0.05639)*result.rgb;\n\
     vec3 oldAsYUV = mat3(0.2126,-0.09991,0.615,0.7152,-0.33609,-0.55861,0.0722,0.436,-0.05639)*old.rgb;\n\
     oldAsYUV.x = '"$xValue"';\n\
-    return vec4(mat3(1,1,1,0,-0.21482,2.12798,1.28033,-0.38059,0) * oldAsYUV.xyz, result.a);:' "$b"
+    return vec4(mat3(1,1,1,0,-0.21482,2.12798,1.28033,-0.38059,0) * oldAsYUV.xyz, result.a);^' "$b"
 	fi
 
 	if [[ "${u}" == "LANCZOS3" || "${u}" == "LUMAXXX" ]]
@@ -105,3 +125,12 @@ fi
 		cat "$qf" | sed -z 's/\n/ѫ/g' | sed -E 's|.+//@p||' | sed -z 's/ѫ/\n/g' >> "$qfb"
 	fi
 done
+
+unset b
+unset b_va
+unset qf
+unset qfb
+unset xValue
+unset revPercent
+unset aa
+unset u

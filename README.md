@@ -176,7 +176,7 @@ See the code in x11wid.sh, there is code only for 800x600
 <br/>By default `C=0`
 <br/>`C` can also be `1` or `2` or `3`
 <br/>If `C==1` then crop resolution 800x550, crop top=25px
-<br/>If `C==2` then crop resolution 800x460, crop top=60px
+<br/>If `C==2` then crop resolution 800x460, crop top=30px
 <br/>If `C==3` then crop resolution 800x450, crop top=70px
 <br/>FFmpeg crops, not mpv (although mpv can too, with vf, but then I would need `sed` copied `input.conf`...)
 <br/>
@@ -298,7 +298,7 @@ or in some cases just <code>./cdmpv 1280x720 60 60</code> for this game, althoug
 ```
 
 <br/>For Wanko to Kurasou (800x600->4K) press three or four times <code>shift+q</code> (depending on FPS and tastes).
-<br/>If that's too slow, then press two times <code>e</code>.
+<br/>If that's too slow, then press two times <code>e</code> (or <code>a</code> for a 1920x1080 monitor).
 <br/>
 <br/>
 Press
@@ -319,6 +319,23 @@ Sometimes `w` is the best (e.g. Koikari Love for Hire), but sometimes it has rin
 Or rarely `n` is better (same as `w` but without Restore). The `Restore` shaders fix some ringing for AiUpscale.
 <br/>Also lines are aliased (in other words, ladder) for some VNs with AiUpscale, which doesn't show up on SSIM test, but we humans see it.
 
+### MPV's hotkeys for reparing the image BEFORE upscaling (read it too!!!)
+Many VNs used very bad/cheap downscaling algos (i.e. bicubic, bilinear or even nearest-neighbor) instead of good algos like lanczos (there are probably variations of lanczos DS, at least the MPV/libplacebo's one is good) or ginseng (both lanczos and ginseng are very similar), catmull_rom or spline16 (both are very similar).
+<br/>In Palette's Saku Saku you can see aliasing (lines are ladders), especially for far away chars.
+<br/>Maybe all Kirikiri games (files are .xp3) suffer from having a bad DS algo, I don't know.
+<br/>
+<br/>Other VNs use low-res character sprites, which is not noticable only when a character is far.
+<br/>Even 2022's VNs still have this issue, like the 1920x1080 3-lang edition (released in 2022-01 by NekoNyan) of Hello Lady.
+<br/>Hotkeys (you can have only one type of repairing):
+<br/><code>2</code> Disable repairing
+<br/><code>@</code> Heavy repairing (Anime4K_Restore_CNN_**Moderate_Soft_M**-YYY.glsl). Not always recommended.
+<br/><code>3</code> Heavy repairing (Anime4K_Restore_CNN_**Moderate_Soft_M**-YYY-percent75.glsl). Not always recommended (but recommended for A Clockwork Ley-Line).
+<br/><code>#</code> Medium repairing (Anime4K_Restore_CNN_**Moderate_Soft_M**-YYY-**half**.glsl).
+<br/><code>4</code> Low repairing (Anime4K_Restore_CNN_**Light_Soft_M**-YYY-**percent70**.glsl).
+<br/><code>$</code> Very low repairing (Anime4K_Restore_CNN_**Light_Soft_M**-YYY-**half**.glsl).
+<br/><code>5</code> (rare) If the input has very heavy aliasing and you need a high FPS (Anime4K_Restore_CNN_**Light_Soft_S**-YYY.glsl). 
+<br/><code>%</code> low FPS, sometimes less details (Anime4K_Restore_CNN_**Light_Soft_VL**-YYY.glsl). (5 and % are recommended for HARUKAZE's Monkeys!¡, A Clockwork Ley-Line)
+<br/>Use the above hotkeys AFTER pressing a hotkey for upscaling algos (btw, if you prefer the default upscale algo, then, obviously, don't press); otherwise, if you press "3" then "a", then you would get no repairing, because "a" clears all previous shaders.
 
 ## About new shaders
 Anime4K shaders are optimized for x264 videos, i.e. videos with all kinds of artifacts.
@@ -473,7 +490,7 @@ http://dege.freeweb.hu/dgVoodoo2/dgVoodoo2/#latest-stable-version (no https)
 <br/>You look at `mpv` but all keyboard & mouse control goes to `vncviewer`.
 <br/>So if `mpv` crashes or you updated one of `.glsl` or `.conf`, then `killall mpv`, then `./x11wid.sh`.
 <br/>You can 100% safely Ctrl+c `x11wid.sh`.
-<br/>If you decide to change FPS, then `./x11wid.sh 1280x720 60 30` or edit `.env-of-current-process`
+<br/>If you decide to change FPS without restarting `cdmpv.sh`, then `./x11wid.sh 30` or edit `.env-of-current-process` and then `./x11wid.sh`
 <br/>If you specify too high FPS for your GPU then you would get high latency for unknown reason.
 
 If you want to close `cdmpv.sh`, then Ctrl+c it and it will automatically kill all the processes it spawned.
