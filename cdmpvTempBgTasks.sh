@@ -193,7 +193,10 @@ else
 	DISPLAY="${HOST_DISPLAY}" WAYLAND_DISPLAY="${HOST_WAYLAND_DISPLAY}" \
 		vncviewer "${VNC_SOCKET_PATH}" -PreferredEncoding=Raw -CompressLevel=0 -NoJpeg=1 -MenuKey=F11 -AcceptClipboard="$ALLOW_COPYOUTOF" -SendClipboard="$ALLOW_COPYINTO" &
 	sleep 3
-	GUEST_DISPLAY="${DISPLAY}" DISPLAY="${HOST_DISPLAY}" WAYLAND_DISPLAY="${HOST_WAYLAND_DISPLAY}" bash "${DIR}"/x11wid.sh &
+	if [[ "$AUTOLAUNCH_X11WID_SH" != "0" ]]
+	then
+		GUEST_DISPLAY="${DISPLAY}" DISPLAY="${HOST_DISPLAY}" WAYLAND_DISPLAY="${HOST_WAYLAND_DISPLAY}" bash "${DIR}"/x11wid.sh &
+	fi
 	set +x
 	sleep 3
 	fixRes

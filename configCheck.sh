@@ -65,6 +65,15 @@ then
 	exit 1
 fi
 
+if [[ "$AUTOLAUNCH_X11WID_SH" == "" ]]
+then
+	AUTOLAUNCH_X11WID_SH=1
+elif [[ ! "$AUTOLAUNCH_X11WID_SH" =~ $bool_re ]]
+then
+	>&2 echo 'config.sh: $AUTOLAUNCH_X11WID_SH must be 0 or 1. Exiting.'
+	exit 1
+fi
+
 if [[ "$FORCE_RERENDER_EVERY" == "" ]]
 then
 	FORCE_RERENDER_EVERY=1.0
