@@ -137,7 +137,7 @@ fi
 #ffmpeg -hide_banner -nostdin -vsync cfr -use_wallclock_as_timestamps 1 -fflags '+genpts' \
 #-s "${GUEST_RES}" \
 #if (( ${newWidth} < 1035 || ${prelumarepair} == 1 ))
-if (( ${prelumarepair} == 1 ))
+if [[ "$prelumarepair" == "1" ]]
 then
 DISPLAY="${D}" "$FFMPEG" -hide_banner -nostdin -fflags '+flush_packets' \
 -vsync vfr \
