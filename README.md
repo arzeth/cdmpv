@@ -9,8 +9,7 @@ Image quality is much better than Magpie.
 <br/>That's because TigerVNC and UltraVNC (IIRC) don't support mouse movements, they send/receive only mouse's absolute position.
 <br/>Therefore, it's recommended to play VNs with `cdmpv`.
 <br/>
-<br/>I developed `cdmpv` because [Magpie](https://github.com/Blinue/Magpie) doesn't work on Wine and I really wanted my waifus (lol) from VNs to be more beautiful as soon as possible on Linux.
-<br/>(Although after 100 hours that I spent on `cdmpv` I want now everything to be beautiful in VNs, even background images.).
+<br/>I developed `cdmpv` because [Magpie](https://github.com/Blinue/Magpie) doesn't work with Wine.
 <br/>
 <br/>And since I want more FPS,
 <br/>and play without a nested display server,
@@ -22,7 +21,7 @@ Image quality is much better than Magpie.
 <br/>
 <br/>Read everything below (especially the Hotkeys section) in order to use it.
 
-## How good can it upscale
+## How good can it upscale?
 ### Example 1
 Original (800x600, lossless .webp)
 <br/>https://arzet.cf/scr/wanko_origHeight600.webp
@@ -326,6 +325,7 @@ Many VNs used very bad/cheap downscaling algos (i.e. bicubic, bilinear or even n
 <br/>
 <br/>Other VNs use low-res character sprites, which is not noticable only when a character is far.
 <br/>Even 2022's VNs still have this issue, like the 1920x1080 3-lang edition (released in 2022-01 by NekoNyan) of Hello Lady.
+<br/>*NOTE*: all of the following hotkeys in this list work only for those upscalers whose hotkey is either <code>a</code> (2x), <code>e+e</code> (4x), <code>o</code> (2x+more details but noise), <code>o+o</code> (same as <code>a</code> but 3% better colors), <code>o+o+o</code> (same as <code>a</code> but sacrifices colors for speed), <code>J</code> (slow 3x). If you try to use it with other upscalers (LUMA upscalers), then it would be reparing *after* upscaling which is already is in shader chains.
 <br/>Hotkeys (you can have only one type of repairing):
 <br/><code>2</code> Disable repairing
 <br/><code>@</code> Heavy repairing (Anime4K_Restore_CNN_**Moderate_Soft_M**-YYY.glsl). Not always recommended.
@@ -333,7 +333,7 @@ Many VNs used very bad/cheap downscaling algos (i.e. bicubic, bilinear or even n
 <br/><code>#</code> Medium repairing (Anime4K_Restore_CNN_**Moderate_Soft_M**-YYY-**half**.glsl).
 <br/><code>4</code> Low repairing (Anime4K_Restore_CNN_**Light_Soft_M**-YYY-**percent70**.glsl).
 <br/><code>$</code> Very low repairing (Anime4K_Restore_CNN_**Light_Soft_M**-YYY-**half**.glsl).
-<br/><code>5</code> (rare) If the input has very heavy aliasing and you need a high FPS (Anime4K_Restore_CNN_**Light_Soft_S**-YYY.glsl). 
+<br/><code>5</code> (rare) If the input has very heavy aliasing and you need a high FPS (Anime4K_Restore_CNN_**Light_Soft_S**-YYY.glsl).
 <br/><code>%</code> low FPS, sometimes less details (Anime4K_Restore_CNN_**Light_Soft_VL**-YYY.glsl). (5 and % are recommended for HARUKAZE's Monkeys!¡, A Clockwork Ley-Line)
 <br/>Use the above hotkeys AFTER pressing a hotkey for upscaling algos (btw, if you prefer the default upscale algo, then, obviously, don't press); otherwise, if you press "3" then "a", then you would get no repairing, because "a" clears all previous shaders.
 
@@ -401,7 +401,7 @@ When 1280x720→1920x1080, then AiUpscale_HQ_3x_LineArt has much better SSIM tha
 <br/>
 <br/>`ravu-zoom-*` damages geometry, so not included. And FSRCNNX is simply better.
 <br/>
-<br/>`Anime4K*Restore*UL` work only on Vulkan.
+<br/>`Anime4K*Restore*UL` work only on Vulkan, and is not used because too slow and sometimes worse than VL.
 <br/>
 <br/>(<code>POSTKERNEL</code> stage is used right before MPV downscales the image with the algo chosen in `dscale`. MPV downscales only when needed.
 <br/>
@@ -410,22 +410,24 @@ When 1280x720→1920x1080, then AiUpscale_HQ_3x_LineArt has much better SSIM tha
 
 
 ## Tips
-1) Disable auto cursor move (i.e. you click "Save game", and your mouse moves to the "Yes" button) in the game menu
+1) https://www.reddit.com/r/visualnovels/comments/lh10yb/getting_movies_to_work_in_visual_novels_on_linux/ (also read all comments)
+
+2) Disable auto cursor move (i.e. you click "Save game", and your mouse moves to the "Yes" button) in the game menu
 <br/>because the game runs in nested X11
 <br/>and it sends the mouse move command only to the nested X11,
 <br/>so the next time you move your mouse,
 <br/>your nested X11's mouse position reverts to the host's one.
 
-2)
+3)
 `wine explorer /desktop=cdmpv,$YOURGUESTRESOLUTION`
 or
 `wine explorer /desktop=cdmpv,$YOURGUESTRESOLUTION game.exe`
 <br/>enables wine's own virtual desktop just for current session (doesn't add nor overwrite `[Software\\Wine\\Explorer\\Desktops]` in your `$WINEPREFIX/user.reg`), which is sometimes needed because `i3` is a *tiling* window manager, i.e. when you have one window, its size is fullscreen, but if you open a second window, both windows would get automatically the same size—half of the screen each. You can press Win+W or Win+Space or Win+Shift+Space to control that.
 <br/>One wineprefix can have multiple of them.
 
-3) If you want Steam to be in host X11/Wayland but you want the game to be in nested X11, then go into game's options -> command arguments -> env DISLPAY=:44 %command%
+4) If you want Steam to be in host X11/Wayland but you want the game to be in nested X11, then go into game's options -> command arguments -> env DISLPAY=:44 %command%
 
-4) Black screen in Saku Saku Cherry Blossoms and flickering in Grisaia, Himawari, Ikinari Anata ni Koishiteiru
+5) Black screen in Saku Saku Cherry Blossoms and flickering in Grisaia, Himawari, Ikinari Anata ni Koishiteiru
 <br/>If you have graphical glitches, then use dgVoodoo2 (see the below section).
 <br/>If you still have graphical glitches or crashes when a video starts to play, then use dgVoodoo2 (you can read about it in the "Alternative to cdmpv" section) AND software rendering AND *un*installed DXVK, which is 100% performance-wise enough for VNs:
 ```
@@ -459,9 +461,9 @@ Install DXVK:
 
 Don't forget about `WINEPREFIX=`
 
-5) In one case (Schatten) as soon as you start it, there's a unskippable video which is displayed black and played for 1 minute.
+6) In one case (Schatten) as soon as you start it, there's a unskippable video which is displayed black and played for 1 minute.
 
-6) Use [wine-tkg](https://github.com/Frogging-Family/wine-tkg-git)
+7) Use [wine-tkg](https://github.com/Frogging-Family/wine-tkg-git). If you use Arch Linux, then add chaotic-aur repo.
 
 ## dgVoodoo 2 (Freeware, not Open Source)
 http://dege.freeweb.hu/dgVoodoo2/dgVoodoo2/#latest-stable-version (no https)
